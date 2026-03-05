@@ -1,1 +1,1 @@
-[Full SwiftUI widget]
+// entry.scanStatus ? "🟢 Active" : "🔴 Idle"
