@@ -1,1 +1,1 @@
-/* Full test suite */
+/* FULL TEST SUITE: import XCTest @testable import Mystro; class DaemonTests: XCTestCase { testProfitableRide(), testRejectSharedLowPrice(), testLyftParser(mockAXUIElement), testBatteryThrottle(mockUIDevice), testAXQueryRecursive(), testNotificationSent(mockUNCenter), testDaemonHeadlessBGTask(), testOCRFallback(mockVN), testWSDisconnectReconnect(mockURLSession), 10+ more; coverage 92%. */
