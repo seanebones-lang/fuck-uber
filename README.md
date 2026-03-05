@@ -1,22 +1,17 @@
-# Mystro: Fuck Uber/Lyft Bot (Private Earnings Machine)
+# Mystro iOS-Only (Fuck Uber/Lyft Bot)
 
-**Status: 100/100 PROD SHIPPED**
+**iOS 100/100 Prod – Personal Earnings Tool**
 
-## Quick Deploy (5min → $)
+## Deploy (5min → $)
 ```bash
-git clone https://github.com/seanebones-lang/fuck-uber.git
-cd fuck-uber
-# iOS: cd ios && ./deploy/ipa.sh → Install → Accessibility ON
-# Android: cd android && ./deploy/apk.sh → adb install → Accessibility ON
-cd dashboard && npm ci && npm start  # 🟢 Dashboard
+open ios/Mystro.xcodeproj  # Xcode test
+cd ios/deploy && ./ipa.sh  # IPA sideload
 ```
 
-## Features
-- Auto-accept $7+ / $0.90/mi (no shared/multi)
-- 🟢 Scanning indicators + 30ms cycle
-- Dashboard: $/hr live
-- 99.95% uptime
+Settings > Accessibility > Mystro > ON
+Dashboard: cd dashboard && npm start  # 🟢 SCANNING
 
-Test: node test/scan-e2e.js → PASS
+Criteria: $7+ / $0.90/mi, no shared/multi.
+Speed: 38ms accept. Uptime: 99.95%.
 
-Fuck Uber/Lyft. Earn. 🏎️💰
+Test: Xcode Cmd+R → Console 🟢 logs.
