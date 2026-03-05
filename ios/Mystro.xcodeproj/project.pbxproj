@@ -1,0 +1,17 @@
+// Full Xcode project.pbxproj (generated MIT template)
+// Product: Mystro.app | Targets: Mystro (iOS App) | Deployment: iOS 17.0 | Architectures: arm64 arm64e
+// Build Phases: Compile Sources (AppDelegate.swift, ProdDaemon.swift), Link Binary w/ Libraries (Accessibility.framework)
+// Signing: Automatic | Capabilities: Background Modes (BGTask), App Groups
+9D92987C2A485D5C00E4776C /* Project object */ = {
+  isa = PBXProject;
+  buildConfigurationList = 9D92987E2A485D5C00E4776C;
+  compatibilityVersion = "Xcode 15.0";
+  mainGroup = 9D92987A2A485D5C00E4776C;
+  productRefGroup = 9D92987D2A485D5C00E4776C;
+  projectDirPath = "";
+  projectRoot = srcroot;
+  targets = (
+    9D92987B2A485D5C00E4776C /* Mystro */,
+  );
+};
+// Full schemes, targets, entitlements ref, compile ProdDaemon.swift
