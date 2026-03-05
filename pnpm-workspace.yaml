@@ -1,0 +1,6 @@
+packages:
+- 'shared/**'
+- 'dashboard/**'
+- 'android/**'
+- 'deploy/**'
+- 'test/**'
