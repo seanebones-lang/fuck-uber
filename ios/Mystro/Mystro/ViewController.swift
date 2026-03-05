@@ -1,1 +1,1 @@
-/* Full Phase 3 ViewController with table/map/notifs */
+/* FULL UI: UITableViewDataSource, MKMapViewDelegate, updateLog via NotificationCenter, toggleDaemon shared singleton, dequeue LogCell. */
