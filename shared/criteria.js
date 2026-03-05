@@ -1,0 +1,1 @@
+export const FIXED_CRITERIA = ({price, miles, shared, stops}) => price >= 7 && price/miles >= 0.90 && !shared && stops === 1;
