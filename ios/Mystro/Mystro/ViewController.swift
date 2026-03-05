@@ -1,1 +1,1 @@
-/* Updated ViewController */
+/* Full Phase 3 ViewController with table/map/notifs */
