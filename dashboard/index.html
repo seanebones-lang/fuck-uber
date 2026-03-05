@@ -1,0 +1,1 @@
+<!DOCTYPE html><html><head><title>Mystro Dashboard</title><style>body{dark-theme}</style></head><body><div id='metrics'>$/hr: --</div><script>const ws=new WebSocket('ws://localhost:8080');ws.onmessage=e=>updateMetrics(JSON.parse(e.data));</script></body>
