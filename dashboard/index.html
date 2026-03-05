@@ -1,1 +1,49 @@
-<!DOCTYPE html><html><head><title>Mystro Dashboard</title><style>body{dark-theme}</style></head><body><div id='metrics'>$/hr: --</div><script>const ws=new WebSocket('ws://localhost:8080');ws.onmessage=e=>updateMetrics(JSON.parse(e.data));</script></body>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mystro Dashboard</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f0f0f; color: #e0e0e0; padding: 1rem; }
+    #metrics { font-size: 1.2rem; }
+    #log { font-size: 12px; color: #888; max-height: 200px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <div id="metrics">$/hr: -- | Accepts: 0 | Rejects: 0</div>
+  <div id="log"></div>
+  <script>
+    const WS_URL = 'ws://localhost:3000';
+    const log = document.getElementById('log');
+    const metrics = document.getElementById('metrics');
+    let accepts = 0, rejects = 0;
+
+    const ws = new WebSocket(WS_URL);
+    ws.onopen = () => appendLog('connected');
+    ws.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.type === 'connected' && data.stats) {
+          accepts = data.stats.accepts || 0;
+          rejects = data.stats.rejects || 0;
+        }
+        if (data.type === 'decision' || data.type === 'action_result') {
+          if (data.decision === 'accept' || data.action === 'accept') accepts += 1;
+          else rejects += 1;
+        }
+        if (data.type === 'scan') appendLog('scan ' + (data.app || ''));
+        if (data.type === 'offer_seen') appendLog('offer ' + (data.app || '') + ' $' + (data.price ?? ''));
+        if (data.type === 'decision') appendLog('decision ' + (data.decision || '') + ' ' + (data.reason || ''));
+        if (data.type === 'error') appendLog('error ' + (data.message || ''));
+        metrics.textContent = 'Accepts: ' + accepts + ' | Rejects: ' + rejects;
+      } catch (_) {}
+    };
+    ws.onclose = () => appendLog('disconnected');
+    function appendLog(msg) {
+      const line = document.createElement('div');
+      line.textContent = new Date().toLocaleTimeString() + ' ' + msg;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+    }
+  </script>
+</body>
+</html>

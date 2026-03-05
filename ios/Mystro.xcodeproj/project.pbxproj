@@ -12,6 +12,10 @@
 		A10000032A48000100000003 /* ProdDaemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000122A48000100000001 /* ProdDaemon.swift */; };
 		A10000042A48000100000004 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000182A48000100000001 /* DashboardViewController.swift */; };
 		A10000062A48000100000006 /* FilterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000192A48000100000001 /* FilterConfig.swift */; };
+		A10000072A48000100000007 /* DaemonTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001A2A48000100000001 /* DaemonTypes.swift */; };
+		A10000082A48000100000008 /* ServiceReadinessStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001B2A48000100000001 /* ServiceReadinessStore.swift */; };
+		A10000092A48000100000009 /* CriteriaEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001C2A48000100000001 /* CriteriaEngine.swift */; };
+		A20000012A48000200000001 /* MystroTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000102A48000200000001 /* MystroTests.swift */; };
 		A10000052A48000100000005 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A10000172A48000100000001 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -25,10 +29,22 @@
 		A10000172A48000100000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A10000182A48000100000001 /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		A10000192A48000100000001 /* FilterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterConfig.swift; sourceTree = "<group>"; };
+		A100001A2A48000100000001 /* DaemonTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaemonTypes.swift; sourceTree = "<group>"; };
+		A100001B2A48000100000001 /* ServiceReadinessStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceReadinessStore.swift; sourceTree = "<group>"; };
+		A100001C2A48000100000001 /* CriteriaEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CriteriaEngine.swift; sourceTree = "<group>"; };
+		A20000102A48000200000001 /* MystroTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MystroTests.swift; sourceTree = "<group>"; };
+		A20000112A48000200000001 /* MystroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MystroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A10000082A48000100000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A20000022A48000200000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,8 +58,17 @@
 			isa = PBXGroup;
 			children = (
 				A100000F2A48000100000001 /* Mystro/Mystro */,
+				A200000F2A48000200000001 /* MystroTests */,
 				9D92987D2A485D5C00E4776C /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		A200000F2A48000200000001 /* MystroTests */ = {
+			isa = PBXGroup;
+			children = (
+				A20000102A48000200000001 /* MystroTests.swift */,
+			);
+			path = "Mystro/MystroTests";
 			sourceTree = "<group>";
 		};
 		9D92987D2A485D5C00E4776C /* Products */ = {
@@ -65,6 +90,9 @@
 				A10000172A48000100000001 /* LaunchScreen.storyboard */,
 				A10000182A48000100000001 /* DashboardViewController.swift */,
 				A10000192A48000100000001 /* FilterConfig.swift */,
+				A100001A2A48000100000001 /* DaemonTypes.swift */,
+				A100001B2A48000100000001 /* ServiceReadinessStore.swift */,
+				A100001C2A48000100000001 /* CriteriaEngine.swift */,
 			);
 			path = Mystro/Mystro;
 			sourceTree = "<group>";
@@ -88,6 +116,23 @@
 			productName = Mystro;
 			productReference = 9D92987F2A485D5C00E4776C /* Mystro.app */;
 			productType = "com.apple.product-type.application";
+		};
+		9D9298802A485D5C00E4776D /* MystroTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9D9298832A485D5C00E4776D /* Build configuration list for PBXNativeTarget "MystroTests" */;
+			buildPhases = (
+				A20000032A48000200000001 /* Sources */,
+				A20000022A48000200000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9D9298822A485D5C00E4776D /* PBXTargetDependency */,
+			);
+			name = MystroTests;
+			productName = MystroTests;
+			productReference = A20000112A48000200000001 /* MystroTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -113,6 +158,7 @@
 			projectRoot = "";
 			targets = (
 				9D92987B2A485D5C00E4776C /* Mystro */,
+				9D9298802A485D5C00E4776D /* MystroTests */,
 			);
 		};
 /* End PBXProject section */
@@ -128,6 +174,24 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		9D9298822A485D5C00E4776D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9D92987B2A485D5C00E4776C /* Mystro */;
+			targetProxy = 9D9298812A485D5C00E4776D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXContainerItemProxy section */
+		9D9298812A485D5C00E4776D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D92987C2A485D5C00E4776C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9D92987B2A485D5C00E4776C;
+			remoteInfo = Mystro;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A10000092A48000100000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -138,6 +202,17 @@
 				A10000032A48000100000003 /* ProdDaemon.swift in Sources */,
 				A10000042A48000100000004 /* DashboardViewController.swift in Sources */,
 				A10000062A48000100000006 /* FilterConfig.swift in Sources */,
+				A10000072A48000100000007 /* DaemonTypes.swift in Sources */,
+				A10000082A48000100000008 /* ServiceReadinessStore.swift in Sources */,
+				A10000092A48000100000009 /* CriteriaEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A20000032A48000200000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A20000012A48000200000001 /* MystroTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,6 +390,42 @@
 			};
 			name = Release;
 		};
+		9D9298842A485D5C00E4776D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mystro.app.MystroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mystro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mystro";
+			};
+			name = Debug;
+		};
+		9D9298852A485D5C00E4776D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mystro.app.MystroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mystro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mystro";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -332,6 +443,15 @@
 			buildConfigurations = (
 				A100000C2A48000100000001 /* Debug */,
 				A100000D2A48000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9D9298832A485D5C00E4776D /* Build configuration list for PBXNativeTarget "MystroTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D9298842A485D5C00E4776D /* Debug */,
+				9D9298852A485D5C00E4776D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

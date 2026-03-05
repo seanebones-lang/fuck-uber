@@ -49,6 +49,8 @@ final class DashboardViewController: UIViewController {
     super.viewWillAppear(animated)
     uberCard.refreshAutoState()
     lyftCard.refreshAutoState()
+    uberCard.refreshReadiness()
+    lyftCard.refreshReadiness()
   }
 
   private func loadState() {
@@ -238,25 +240,48 @@ final class DashboardViewController: UIViewController {
   private func updateDaemonEnabledApps() {
     guard isOnline, let daemon = (UIApplication.shared.delegate as? AppDelegate)?.daemon else { return }
     var ids: [String] = []
-    if uberEnabled { ids.append("com.ubercab.driver") }
-    if lyftEnabled { ids.append("me.lyft.driver") }
+    if uberEnabled && ServiceReadinessStore.isAvailableForScan(bundleId: "com.ubercab.driver") { ids.append("com.ubercab.driver") }
+    if lyftEnabled && ServiceReadinessStore.isAvailableForScan(bundleId: "me.lyft.driver") { ids.append("me.lyft.driver") }
     daemon.enabledBundleIds = ids
     if !ids.isEmpty { daemon.startScanning() }
   }
 
   @objc private func toggleGo() {
+    if !isOnline {
+      if !canGoOnline() {
+        showGoBlockedAlert()
+        return
+      }
+    }
     isOnline.toggle()
     updateStatusText()
     let daemon = (UIApplication.shared.delegate as? AppDelegate)?.daemon
     if isOnline {
       var ids: [String] = []
-      if uberEnabled { ids.append("com.ubercab.driver") }
-      if lyftEnabled { ids.append("me.lyft.driver") }
+      if uberEnabled && ServiceReadinessStore.isAvailableForScan(bundleId: "com.ubercab.driver") { ids.append("com.ubercab.driver") }
+      if lyftEnabled && ServiceReadinessStore.isAvailableForScan(bundleId: "me.lyft.driver") { ids.append("me.lyft.driver") }
       daemon?.enabledBundleIds = ids
       if !ids.isEmpty { daemon?.startScanning() }
     } else {
       daemon?.stopScanning()
     }
+  }
+
+  /// True if at least one enabled service is linked (or ready/degraded).
+  private func canGoOnline() -> Bool {
+    if uberEnabled && ServiceReadinessStore.isAvailableForScan(bundleId: "com.ubercab.driver") { return true }
+    if lyftEnabled && ServiceReadinessStore.isAvailableForScan(bundleId: "me.lyft.driver") { return true }
+    return false
+  }
+
+  private func showGoBlockedAlert() {
+    let alert = UIAlertController(
+      title: "Link a service first",
+      message: "Open at least one driver app (Uber or Lyft) from the link below and sign in. Then tap GO.",
+      preferredStyle: .alert
+    )
+    alert.addAction(UIAlertAction(title: "OK", style: .default))
+    present(alert, animated: true)
   }
 
   @objc private func showHistory() {
@@ -300,7 +325,8 @@ final class DashboardViewController: UIViewController {
     )
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
     if let u = url {
-      alert.addAction(UIAlertAction(title: "Open \(service)", style: .default) { _ in
+      alert.addAction(UIAlertAction(title: "Open \(service)", style: .default) { [weak self] _ in
+        self?.markServiceLinked(service: service)
         UIApplication.shared.open(u)
       })
     }
@@ -310,6 +336,18 @@ final class DashboardViewController: UIViewController {
       })
     }
     present(alert, animated: true)
+  }
+
+  private func markServiceLinked(service: String) {
+    let bundleId: String
+    switch service.lowercased() {
+    case "uber": bundleId = "com.ubercab.driver"
+    case "lyft": bundleId = "me.lyft.driver"
+    default: return
+    }
+    ServiceReadinessStore.markLinked(bundleId: bundleId)
+    uberCard.refreshReadiness()
+    lyftCard.refreshReadiness()
   }
 }
 
@@ -322,9 +360,31 @@ final class ServiceCard: UIView {
     didSet { toggle.isOn = isOn }
   }
 
+  private let bundleId: String
+
   /// Update status line when dashboard goes online/offline.
   func setOnline(_ online: Bool) {
-    statusLabel.text = online ? "Mystro is online" : "Mystro is offline"
+    isOnline = online
+    updateStatusLine()
+  }
+
+  func refreshReadiness() {
+    updateStatusLine()
+  }
+
+  private var isOnline = false
+
+  private func updateStatusLine() {
+    let readiness = ServiceReadinessStore.get(bundleId: bundleId)
+    let readinessText: String
+    switch readiness {
+    case .unlinked: readinessText = "Not linked"
+    case .linked: readinessText = "Linked"
+    case .ready: readinessText = "Ready"
+    case .degraded: readinessText = "Degraded"
+    }
+    let base = isOnline ? "Mystro is online" : "Mystro is offline"
+    statusLabel.text = "\(base) · \(readinessText)"
   }
 
   private let titleLabel = UILabel()
@@ -335,6 +395,7 @@ final class ServiceCard: UIView {
   private let autoRejectButton = UIButton(type: .system)
 
   init(service: String, bundleId: String) {
+    self.bundleId = bundleId
     super.init(frame: .zero)
     backgroundColor = MystroUI.cardBackground
     layer.cornerRadius = MystroUI.cornerRadius
@@ -385,6 +446,7 @@ final class ServiceCard: UIView {
       stack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
     ])
     refreshAutoState()
+    updateStatusLine()
   }
 
   func refreshAutoState() {
@@ -573,13 +635,16 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
     let df = DateFormatter()
     df.dateStyle = .short
     df.timeStyle = .short
-    cell.textLabel?.text = "\(df.string(from: e.date)) · \(e.app) · $\(String(format: "%.2f", e.price)) · \(e.latencyMs)ms"
+    var text = "\(df.string(from: e.date)) · \(e.app) · $\(String(format: "%.2f", e.price))"
+    if e.latencyMs > 0 { text += " · \(e.latencyMs)ms" }
+    if let dec = e.decision, let reason = e.reason { text += " · \(dec):\(reason)" }
+    cell.textLabel?.text = text
     cell.textLabel?.textColor = MystroUI.textPrimary
     cell.backgroundColor = MystroUI.cardBackground
     return cell
   }
 
   func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-    "Accepted offers"
+    "Decisions"
   }
 }
