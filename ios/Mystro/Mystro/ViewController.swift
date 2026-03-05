@@ -1,1 +1,9 @@
-/* FULL UI: UITableViewDataSource, MKMapViewDelegate, updateLog via NotificationCenter, toggleDaemon shared singleton, dequeue LogCell. */
+import UIKit
+
+/// Placeholder for legacy reference. App root is DashboardViewController.
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .black
+  }
+}
