@@ -1,5 +1,1 @@
-// Update renderMetrics():
-// + `🟢 SCANNING ${metrics.scan.uber} | ${metrics.scan.lyft} (Cycle: ${metrics.cycle}ms)`
-// Green pulse: box.style.fg = metrics.scanning ? 'green' : 'yellow';
-// WS broadcast scan state
-wss.clients.forEach(ws => ws.send(JSON.stringify({...metrics, scan: metrics.scan})));
+const WebSocket = require('ws'); const wss = new WebSocket.Server({port:3000}); let clients = []; wss.on('connection', ws => { clients.push(ws); ws.on('message', data => { clients.forEach(c => c.send(data)); }); ws.on('close', () => clients = clients.filter(c => c !== ws)); }); /* Reconnect broadcast */
