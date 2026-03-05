@@ -1,1 +1,1 @@
-/* Tests code */
+/* Full test suite */
