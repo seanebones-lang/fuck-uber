@@ -1,0 +1,2 @@
+// Protobuf: Hourly Accepts Declines Latency Uptime
+message Metrics { double hourly = 1; ... }
