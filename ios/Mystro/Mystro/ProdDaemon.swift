@@ -1,6 +1,18 @@
 import Foundation
 import UIKit
 
+// MARK: - Notifications
+
+extension Notification.Name {
+  static let destroDaemonDidBecomeIdle = Notification.Name("destroDaemonDidBecomeIdle")
+  static let destroDaemonDidStartScanning = Notification.Name("destroDaemonDidStartScanning")
+  static let destroAcceptTapFailed = Notification.Name("destroAcceptTapFailed")
+  static let destroRejectTapFailed = Notification.Name("destroRejectTapFailed")
+  static let destroConfirmAcceptRequested = Notification.Name("destroConfirmAcceptRequested")
+  /// Posted when we see an offer (accept, reject, or confirm). userInfo: app, price, miles, dollarsPerMile, pickupMiles, surge, rideType, reason, decision.
+  static let destroOfferSeen = Notification.Name("destroOfferSeen")
+}
+
 // MARK: - Constants
 
 private enum Config {
@@ -30,6 +42,7 @@ private enum AppKind {
 
 // MARK: - ProdDaemon
 // iOS-only. State machine with pluggable OfferSource and ActionExecutor.
+// Scan loop runs every Config.cycleMs (30ms); keep work in the loop minimal to avoid blocking.
 
 class ProdDaemon {
   private var scanTask: Task<Void, Never>?
@@ -40,6 +53,17 @@ class ProdDaemon {
   var offerSource: OfferSource = NilOfferSource()
   /// Pluggable accept/reject executor. Default is no-op.
   var actionExecutor: ActionExecutor = NoOpActionExecutor()
+
+  /// Manages auto-switching: when ride accepted on one app, other goes offline; on completion, other comes back.
+  var conflictManager: ConflictManager = ConflictManager()
+
+  /// When ride is active, poll this often to detect trip end (no offer screen = completed).
+  private var rideCompletionTask: Task<Void, Never>?
+  private let rideCompletionIntervalNs: UInt64 = 10_000_000_000  // 10s
+  private let rideCompletionNilCountThreshold = 2
+
+  /// Pending offer for confirm-before-accept mode. Cleared after user accepts/declines or timeout.
+  private var pendingConfirmOffer: (offer: OfferData, app: String)?
 
   /// Current daemon state for observers and tests.
   private(set) var state: DaemonState = .idle {
@@ -57,6 +81,76 @@ class ProdDaemon {
 
   var isScanning: Bool { scanTask != nil }
 
+  /// Idle minutes since last accept/reject; used by CriteriaEngine for dynamic thresholds.
+  static var lastDecisionTime: Date?
+  static var idleMinutesForCriteria: Double {
+    guard let t = lastDecisionTime else { return 60 }
+    return max(0, Date().timeIntervalSince(t) / 60)
+  }
+
+  /// Build userInfo for destroOfferSeen / confirm alert: app, price, miles, $/mi, pickup, surge, rideType, reason, decision.
+  private static func offerBreakdownUserInfo(offer: OfferData, app: String, decision: RideDecision) -> [String: Any] {
+    let dollarsPerMile = offer.miles > 0 ? offer.price / offer.miles : 0.0
+    let reasonStr: String
+    let decStr: String
+    switch decision {
+    case .accept(let r): reasonStr = r.rawValue; decStr = "accept"
+    case .reject(let r): reasonStr = r.rawValue; decStr = "reject"
+    }
+    var info: [String: Any] = [
+      "app": app,
+      "price": offer.price,
+      "miles": offer.miles,
+      "dollarsPerMile": dollarsPerMile,
+      "reason": reasonStr,
+      "decision": decStr,
+      "stops": offer.stops,
+      "shared": offer.shared,
+    ]
+    if let p = offer.pickupDistanceMiles { info["pickupMiles"] = p }
+    if let s = offer.surgeMultiplier { info["surge"] = s }
+    if let rt = offer.rideType { info["rideType"] = rt.displayName }
+    if let hr = offer.estimatedHourlyRate { info["estimatedHourlyRate"] = hr }
+    return info
+  }
+
+  /// Light haptic when auto-accept or auto-reject fires (runs on main queue).
+  private static func hapticDecision() {
+    DispatchQueue.main.async {
+      UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+  }
+
+  /// Bring driver app to foreground so we can read its UI. Uses private API when available (Misaka26); otherwise opens app via URL scheme so we cycle between Uber/Lyft.
+  private func bringDriverAppToForeground(bundleId: String) async {
+    let didSwitch = AppSwitcher.shared.bringToForeground(bundleId: bundleId)
+    if didSwitch {
+      try? await Task.sleep(nanoseconds: 300_000_000)  // 0.3s
+      return
+    }
+    // Stock iOS: private API unavailable. Open driver app by URL scheme so it comes to front; then we read the frontmost app.
+    await MainActor.run {
+      let url = URL(string: "\(bundleId)://")
+      if let url = url {
+        UIApplication.shared.open(url)
+      }
+    }
+    try? await Task.sleep(nanoseconds: 1_000_000_000)  // 1.0s for app to come to front and AX to see it
+  }
+
+  /// Bring Destro back to the front so the user sees our UI (offer card, etc.). Like Mystro: offers show in our app.
+  private func bringDestroToForeground() async {
+    if AppSwitcher.shared.bringToForeground(bundleId: "online.nextelevenstudios.destro") {
+      return
+    }
+    await MainActor.run {
+      if let url = URL(string: "destro://") {
+        UIApplication.shared.open(url)
+      }
+    }
+    try? await Task.sleep(nanoseconds: 400_000_000)  // 0.4s for Destro to show
+  }
+
   func startScanning() {
     guard !enabledBundleIds.isEmpty else { return }
     stopScanning()
@@ -67,18 +161,57 @@ class ProdDaemon {
       guard let self else { return }
       self.state = .scanning
       Metrics.pubScan(app: "system", status: "🟢 SCANNING started")
+      DashboardRelay.shared.connect()
+      var exitError: String?
       do {
         while !Task.isCancelled {
           let app = apps[self.currentIndex % apps.count]
-          if let offer = source.fetchOffer(appBundleId: app) {
+          await self.bringDriverAppToForeground(bundleId: app)
+          _ = await ServiceReadinessStore.discoverPID(for: app)
+          var offer: OfferData?
+          for attempt in 1...3 {
+            offer = source.fetchOffer(appBundleId: app)
+            if offer != nil { break }
+            try? await Task.sleep(nanoseconds: UInt64(attempt * 50) * 1_000_000)
+          }
+          if let offer = offer {
             self.state = .decisioning(app: app)
             let decision = self.decide(offer)
+            let offerInfo = Self.offerBreakdownUserInfo(offer: offer, app: app, decision: decision)
+            NotificationCenter.default.post(name: .destroOfferSeen, object: nil, userInfo: offerInfo)
+
             let latencyMs = 38
             switch decision {
             case .accept(let reason):
               if FilterConfig.autoAccept {
-                executor.executeAccept(at: offer.acceptPoint, appBundleId: app)
-                Metrics.pubAccept(app: app, price: offer.price, latency: latencyMs, reason: reason)
+                if FilterConfig.requireConfirmBeforeAccept {
+                  self.pendingConfirmOffer = (offer, app)
+                  var confirmInfo = offerInfo
+                  confirmInfo["reason"] = reason.rawValue
+                  await self.bringDestroToForeground()
+                  NotificationCenter.default.post(
+                    name: .destroConfirmAcceptRequested,
+                    object: nil,
+                    userInfo: confirmInfo
+                  )
+                } else {
+                  await self.bringDriverAppToForeground(bundleId: app)
+                  try? await Task.sleep(nanoseconds: 400_000_000)  // 0.4s for accept button to be ready
+                  let tapOk = executor.executeAccept(at: offer.acceptPoint, appBundleId: app)
+                  if tapOk {
+                    Self.hapticDecision()
+                    self.conflictManager.rideAccepted(appBundleId: app)
+                    ProdDaemon.lastDecisionTime = Date()
+                    self.startRideCompletionPoller(source: source, activeAppBundleId: app)
+                    Metrics.pubAccept(app: app, price: offer.price, latency: latencyMs, reason: reason)
+                  } else {
+                    NotificationCenter.default.post(
+                      name: .destroAcceptTapFailed,
+                      object: nil,
+                      userInfo: ["app": app, "price": offer.price]
+                    )
+                  }
+                }
               } else {
                 Metrics.pubDecision(app: app, decision: .reject(reason: .autoAcceptDisabled), offer: offer)
               }
@@ -86,28 +219,56 @@ class ProdDaemon {
               try? await Task.sleep(nanoseconds: Config.cooldownMs)
             case .reject(let reason):
               if FilterConfig.autoReject, let rejectPoint = offer.rejectPoint {
-                executor.executeReject(at: rejectPoint, appBundleId: app)
+                await self.bringDriverAppToForeground(bundleId: app)
+                try? await Task.sleep(nanoseconds: 400_000_000)
+                let rejectOk = executor.executeReject(at: rejectPoint, appBundleId: app)
+                if !rejectOk {
+                  NotificationCenter.default.post(
+                    name: .destroRejectTapFailed,
+                    object: nil,
+                    userInfo: ["app": app, "price": offer.price, "reason": reason.rawValue]
+                  )
+                } else {
+                  Self.hapticDecision()
+                }
               }
+              ProdDaemon.lastDecisionTime = Date()
               Metrics.pubDecision(app: app, decision: .reject(reason: reason), offer: offer)
               self.state = .cooldown
               try? await Task.sleep(nanoseconds: Config.cooldownMs)
             }
+          } else {
+            // no offer this cycle; stay in scanning
           }
           self.state = .scanning
           Metrics.pubScan(app: app, status: "🟢 SCANNING")
           self.currentIndex += 1
+          // Return to Destro so user sees our app and offer card (Mystro-style).
+          await self.bringDestroToForeground()
           try await Task.sleep(nanoseconds: Config.cycleMs)
         }
       } catch {
         self.state = .error(error.localizedDescription)
-        print("[Mystro] daemon stopped: \(error)")
+        exitError = error.localizedDescription
+        print("[Destro] daemon stopped: \(error)")
+        LogBuffer.shared.append("[Destro] daemon stopped: \(error)")
       }
       self.state = .idle
       self.scanTask = nil
+      DashboardRelay.shared.disconnect()
+      AppGroupStore.writeStatus("🔴 Idle", lastApp: "—")
+      if #available(iOS 16.1, *) {
+        updateDestroLiveActivity(status: "🔴 Idle", activeApp: "—", sessionEarnings: 0, timeOnline: 0)
+      }
+      var userInfo: [String: String]?
+      if let err = exitError { userInfo = ["error": err] }
+      NotificationCenter.default.post(name: .destroDaemonDidBecomeIdle, object: nil, userInfo: userInfo)
     }
   }
 
   func stopScanning() {
+    rideCompletionTask?.cancel()
+    rideCompletionTask = nil
     scanTask?.cancel()
     scanTask = nil
     state = .idle
@@ -118,11 +279,42 @@ class ProdDaemon {
     CriteriaEngine.evaluate(data)
   }
 
-  /// PID for driver app. iOS can't enumerate other apps' PIDs; set mystro.pid.<bundle> in UserDefaults if you have it from elsewhere.
-  private func findPID(bundle: String) -> pid_t? {
-    let key = "mystro.pid.\(bundle)"
-    let stored = UserDefaults.standard.object(forKey: key) as? Int32
-    return stored.flatMap { pid_t(exactly: $0) }
+  /// Call from UI when user taps "Accept" on the confirm-before-accept alert. Performs the stored pending accept (tap + conflict + poller). Uses same bring-to-foreground as daemon (URL fallback on stock iOS), then returns to Destro.
+  func performPendingAccept() {
+    guard let pending = pendingConfirmOffer else { return }
+    pendingConfirmOffer = nil
+    let (offer, app) = pending
+    Task { [weak self] in
+      guard let self else { return }
+      await self.bringDriverAppToForeground(bundleId: app)
+      try? await Task.sleep(nanoseconds: 400_000_000)  // 0.4s for accept button
+      await MainActor.run {
+        self.performPendingAcceptAfterDelay(offer: offer, app: app)
+      }
+      await self.bringDestroToForeground()  // Return to Destro (Mystro-style)
+    }
+  }
+
+  private func performPendingAcceptAfterDelay(offer: OfferData, app: String) {
+    let tapOk = actionExecutor.executeAccept(at: offer.acceptPoint, appBundleId: app)
+    if tapOk {
+      Self.hapticDecision()
+      conflictManager.rideAccepted(appBundleId: app)
+      ProdDaemon.lastDecisionTime = Date()
+      startRideCompletionPoller(source: offerSource, activeAppBundleId: app)
+      Metrics.pubAccept(app: app, price: offer.price, latency: 38, reason: .meetsCriteria)
+    } else {
+      NotificationCenter.default.post(
+        name: .destroAcceptTapFailed,
+        object: nil,
+        userInfo: ["app": app, "price": offer.price]
+      )
+    }
+  }
+
+  /// Clear pending confirm offer (e.g. user tapped Decline).
+  func clearPendingConfirm() {
+    pendingConfirmOffer = nil
   }
 
   private func parseDouble(_ text: String?) -> Double? {
@@ -131,17 +323,60 @@ class ProdDaemon {
     guard let d = Double(cleaned), d >= 0 else { return nil }
     return d
   }
+
+  /// Polls for trip end: when offer source returns nil for active app repeatedly, assume trip completed.
+  private func startRideCompletionPoller(source: OfferSource, activeAppBundleId: String) {
+    rideCompletionTask?.cancel()
+    let app = activeAppBundleId
+    let conflict = conflictManager
+    rideCompletionTask = Task { [weak self] in
+      guard let self else { return }
+      try? await Task.sleep(nanoseconds: 15_000_000_000)  // 15s delay before first poll (avoid rideCompleted right after accept)
+      var nilCount = 0
+      while !Task.isCancelled {
+        try? await Task.sleep(nanoseconds: self.rideCompletionIntervalNs)
+        guard !Task.isCancelled else { break }
+        if case .rideActive(let active) = conflict.state, active == app {
+          if source.fetchOffer(appBundleId: app) == nil {
+            nilCount += 1
+            if nilCount >= self.rideCompletionNilCountThreshold {
+              conflict.rideCompleted(wasActiveAppBundleId: app)
+              break
+            }
+          } else {
+            nilCount = 0
+          }
+        } else {
+          break
+        }
+      }
+      self.rideCompletionTask = nil
+    }
+  }
 }
 
 // MARK: - Metrics
 
 struct Metrics {
   static func pubScan(app: String, status: String) {
-    print("[Mystro] \(status) \(app)")
+    print("[Destro] \(status) \(app)")
+    LogBuffer.shared.append("[Destro] \(status) \(app)")
+    AppGroupStore.writeStatus(status, lastApp: app)
+    if #available(iOS 16.1, *) {
+      let session = EarningsTracker.shared.sessionEarnings()
+      updateDestroLiveActivity(status: status, activeApp: app, sessionEarnings: session.total, timeOnline: Date().timeIntervalSince(session.startDate))
+    }
   }
 
   static func pubState(old: DaemonState, new: DaemonState) {
-    print("[Mystro] state \(stateLabel(old)) -> \(stateLabel(new))")
+    let msg = "[Destro] state \(stateLabel(old)) -> \(stateLabel(new))"
+    print(msg)
+    LogBuffer.shared.append(msg)
+    DashboardRelay.shared.send([
+      "type": "state",
+      "old": stateLabel(old),
+      "new": stateLabel(new)
+    ])
   }
 
   private static func stateLabel(_ s: DaemonState) -> String {
@@ -157,7 +392,21 @@ struct Metrics {
   static func pubAccept(app: String, price: Double, latency: Int, reason: DecisionReason = .meetsCriteria) {
     let name = app.contains("uber") ? "Uber" : (app.contains("lyft") ? "Lyft" : app)
     HistoryStore.append(app: name, price: price, latencyMs: latency, decision: .accept(reason: reason))
-    print("[Mystro] Accept \(price) | \(latency)ms | \(reason.rawValue)")
+    AppGroupStore.writeSessionEarnings(EarningsTracker.shared.sessionEarnings().total)
+    if #available(iOS 16.1, *) {
+      let session = EarningsTracker.shared.sessionEarnings()
+      updateDestroLiveActivity(status: "🟢 SCANNING", activeApp: name, sessionEarnings: session.total, timeOnline: Date().timeIntervalSince(session.startDate))
+    }
+    DashboardRelay.shared.send([
+      "type": "decision", "decision": "accept", "app": name, "price": price, "latency": latency, "reason": reason.rawValue
+    ])
+    DashboardRelay.shared.send([
+      "type": "earnings",
+      "session": EarningsTracker.shared.sessionEarnings().total,
+      "today": EarningsTracker.shared.todayEarnings().total
+    ])
+    print("[Destro] Accept \(price) | \(latency)ms | \(reason.rawValue)")
+    LogBuffer.shared.append("[Destro] Accept \(price) | \(latency)ms | \(reason.rawValue)")
   }
 
   static func pubDecision(app: String, decision: RideDecision, offer: OfferData) {
@@ -168,6 +417,11 @@ struct Metrics {
     case .reject(let r): reason = r
     }
     HistoryStore.appendDecision(app: name, offer: offer, decision: decision)
-    print("[Mystro] Decision \(decision) | \(name) $\(offer.price)")
+    let decStr: String = { if case .reject = decision { return "reject" }; return "accept" }()
+    DashboardRelay.shared.send([
+      "type": "decision", "decision": decStr, "app": name, "price": offer.price, "reason": reason.rawValue
+    ])
+    print("[Destro] Decision \(decision) | \(name) $\(offer.price)")
+    LogBuffer.shared.append("[Destro] Decision \(decision) | \(name) $\(offer.price)")
   }
 }

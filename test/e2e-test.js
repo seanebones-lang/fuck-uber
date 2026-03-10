@@ -14,6 +14,12 @@ async function main() {
   const received = [];
   const timeout = 5000;
 
+  ws.on('message', (data) => {
+    try {
+      received.push(JSON.parse(data.toString()));
+    } catch (_) {}
+  });
+
   await new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error('Connection timeout')), timeout);
     ws.on('open', () => {
@@ -21,12 +27,6 @@ async function main() {
       resolve();
     });
     ws.on('error', reject);
-  });
-
-  ws.on('message', (data) => {
-    try {
-      received.push(JSON.parse(data.toString()));
-    } catch (_) {}
   });
 
   const toSend = [

@@ -6,3 +6,4 @@ xcuserdata/
 # Build
 build/
 DerivedData/
+node_modules/

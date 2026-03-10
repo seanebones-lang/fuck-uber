@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Benchmark / sanity run for Mystro dashboard and criteria.
+ * Benchmark / sanity run for Destro dashboard and criteria.
  * Run: node shared/benchmark.js
  * Optional: start dashboard server first (npm run start in dashboard) and this script will send mock events.
  */
@@ -12,7 +12,7 @@ function sleep(ms) {
 }
 
 async function run() {
-  console.log('Mystro benchmark – connecting to', WS_URL);
+  console.log('Destro benchmark – connecting to', WS_URL);
   let ws;
   try {
     const WebSocket = (await import('ws')).default;

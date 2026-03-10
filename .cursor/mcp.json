@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cto-eleven": {
+      "command": "node",
+      "args": ["mcp-server/server.mjs"]
+    }
+  }
+}

@@ -11,16 +11,74 @@
 		A10000022A48000100000002 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000112A48000100000001 /* ViewController.swift */; };
 		A10000032A48000100000003 /* ProdDaemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000122A48000100000001 /* ProdDaemon.swift */; };
 		A10000042A48000100000004 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000182A48000100000001 /* DashboardViewController.swift */; };
+		A10000052A48000100000005 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A10000172A48000100000001 /* LaunchScreen.storyboard */; };
 		A10000062A48000100000006 /* FilterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000192A48000100000001 /* FilterConfig.swift */; };
 		A10000072A48000100000007 /* DaemonTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001A2A48000100000001 /* DaemonTypes.swift */; };
 		A10000082A48000100000008 /* ServiceReadinessStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001B2A48000100000001 /* ServiceReadinessStore.swift */; };
 		A10000092A48000100000009 /* CriteriaEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001C2A48000100000001 /* CriteriaEngine.swift */; };
+		A10000DA2A4800010000000A /* AccessibilityOfferSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000DC2A48000100000001 /* AccessibilityOfferSource.swift */; };
+		A10000DB2A4800010000000B /* VisionOfferSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000DD2A48000100000001 /* VisionOfferSource.swift */; };
+		A10000DE2A4800010000000C /* HIDActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000DF2A48000100000001 /* HIDActionExecutor.swift */; };
+		A10000FA2A48000100000019 /* AccessibilityActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000FB2A48000100000001 /* AccessibilityActionExecutor.swift */; };
+		A10000E02A4800010000000D /* AppSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E12A48000100000001 /* AppSwitcher.swift */; };
+		A10000E22A4800010000000E /* ConflictManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E32A48000100000001 /* ConflictManager.swift */; };
+		A10000E42A4800010000000F /* GeofenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E52A48000100000001 /* GeofenceManager.swift */; };
+		A10000E62A48000100000010 /* RidePredictor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E72A48000100000001 /* RidePredictor.swift */; };
+		A10000E82A48000100000011 /* DynamicRuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E92A48000100000001 /* DynamicRuleEngine.swift */; };
+		A10000EA2A48000100000012 /* EarningsTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000EB2A48000100000001 /* EarningsTracker.swift */; };
+		A10000EC2A48000100000013 /* MystroLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000ED2A48000100000001 /* MystroLiveActivity.swift */; };
+		A10000EE2A48000100000014 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000EF2A48000100000001 /* SyncManager.swift */; };
+		A10000F02A48000100000015 /* MystroIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000F12A48000100000001 /* MystroIntents.swift */; };
+		A10000F22A48000100000016 /* AppGroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000F32A48000100000001 /* AppGroupStore.swift */; };
+		A10000F42A48000100000017 /* DashboardRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000F52A48000100000001 /* DashboardRelay.swift */; };
+		A10000F72A48000100000001 /* LogBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000F62A48000100000001 /* LogBuffer.swift */; };
 		A20000012A48000200000001 /* MystroTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000102A48000200000001 /* MystroTests.swift */; };
-		A10000052A48000100000005 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A10000172A48000100000001 /* LaunchScreen.storyboard */; };
+		A30000012A48000300000001 /* MystroWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30000102A48000300000001 /* MystroWidget.swift */; };
+		A30000022A48000300000002 /* DestroWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A30000112A48000300000001 /* DestroWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A40000012A48000400000001 /* DestroUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40000102A48000400000001 /* DestroUITests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9D9298812A485D5C00E4776D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D92987C2A485D5C00E4776C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9D92987B2A485D5C00E4776C;
+			remoteInfo = Destro;
+		};
+		9D9298912A485D5C00E4776E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D92987C2A485D5C00E4776C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9D9298902A485D5C00E4776E;
+			remoteInfo = DestroWidgetExtension;
+		};
+		9D9298A12A485D5C00E47770 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D92987C2A485D5C00E4776C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9D92987B2A485D5C00E4776C;
+			remoteInfo = Destro;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A300000B2A48000300000001 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A30000022A48000300000002 /* DestroWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		9D92987F2A485D5C00E4776C /* Mystro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mystro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		02D89D402F5A4952000FABAC /* DestroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DestroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D92987F2A485D5C00E4776C /* Destro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Destro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000102A48000100000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A10000112A48000100000001 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A10000122A48000100000001 /* ProdDaemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProdDaemon.swift; sourceTree = "<group>"; };
@@ -32,8 +90,29 @@
 		A100001A2A48000100000001 /* DaemonTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaemonTypes.swift; sourceTree = "<group>"; };
 		A100001B2A48000100000001 /* ServiceReadinessStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceReadinessStore.swift; sourceTree = "<group>"; };
 		A100001C2A48000100000001 /* CriteriaEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CriteriaEngine.swift; sourceTree = "<group>"; };
+		A10000DC2A48000100000001 /* AccessibilityOfferSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityOfferSource.swift; sourceTree = "<group>"; };
+		A10000DD2A48000100000001 /* VisionOfferSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionOfferSource.swift; sourceTree = "<group>"; };
+		A10000DF2A48000100000001 /* HIDActionExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIDActionExecutor.swift; sourceTree = "<group>"; };
+		A10000FB2A48000100000001 /* AccessibilityActionExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityActionExecutor.swift; sourceTree = "<group>"; };
+		A10000E12A48000100000001 /* AppSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSwitcher.swift; sourceTree = "<group>"; };
+		A10000E32A48000100000001 /* ConflictManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictManager.swift; sourceTree = "<group>"; };
+		A10000E52A48000100000001 /* GeofenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofenceManager.swift; sourceTree = "<group>"; };
+		A10000E72A48000100000001 /* RidePredictor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RidePredictor.swift; sourceTree = "<group>"; };
+		A10000E92A48000100000001 /* DynamicRuleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicRuleEngine.swift; sourceTree = "<group>"; };
+		A10000EB2A48000100000001 /* EarningsTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsTracker.swift; sourceTree = "<group>"; };
+		A10000ED2A48000100000001 /* MystroLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MystroLiveActivity.swift; sourceTree = "<group>"; };
+		A10000EF2A48000100000001 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
+		A10000F12A48000100000001 /* MystroIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MystroIntents.swift; sourceTree = "<group>"; };
+		A10000F32A48000100000001 /* AppGroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupStore.swift; sourceTree = "<group>"; };
+		A10000F52A48000100000001 /* DashboardRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardRelay.swift; sourceTree = "<group>"; };
+		A10000F62A48000100000001 /* LogBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogBuffer.swift; sourceTree = "<group>"; };
 		A20000102A48000200000001 /* MystroTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MystroTests.swift; sourceTree = "<group>"; };
-		A20000112A48000200000001 /* MystroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MystroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A30000102A48000300000001 /* MystroWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MystroWidget.swift; sourceTree = "<group>"; };
+		A30000112A48000300000001 /* DestroWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DestroWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A30000132A48000300000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A30000142A48000300000001 /* MystroWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MystroWidget.entitlements; sourceTree = "<group>"; };
+		02D89D412F5A4952000FABAD /* DestroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DestroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A40000102A48000400000001 /* DestroUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestroUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +130,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A40000022A48000400000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A30000082A48000300000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -58,23 +151,20 @@
 			isa = PBXGroup;
 			children = (
 				A100000F2A48000100000001 /* Mystro/Mystro */,
-				A200000F2A48000200000001 /* MystroTests */,
+				A300000F2A48000300000001 /* Mystro/Widgets */,
+				A200000F2A48000200000001 /* Mystro/MystroTests */,
+				A400000F2A48000400000001 /* DestroUITests */,
 				9D92987D2A485D5C00E4776C /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		A200000F2A48000200000001 /* MystroTests */ = {
-			isa = PBXGroup;
-			children = (
-				A20000102A48000200000001 /* MystroTests.swift */,
-			);
-			path = "Mystro/MystroTests";
 			sourceTree = "<group>";
 		};
 		9D92987D2A485D5C00E4776C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9D92987F2A485D5C00E4776C /* Mystro.app */,
+				9D92987F2A485D5C00E4776C /* Destro.app */,
+				A30000112A48000300000001 /* DestroWidgetExtension.appex */,
+				02D89D402F5A4952000FABAC /* DestroTests.xctest */,
+				02D89D412F5A4952000FABAD /* DestroUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -93,33 +183,77 @@
 				A100001A2A48000100000001 /* DaemonTypes.swift */,
 				A100001B2A48000100000001 /* ServiceReadinessStore.swift */,
 				A100001C2A48000100000001 /* CriteriaEngine.swift */,
+				A10000DC2A48000100000001 /* AccessibilityOfferSource.swift */,
+				A10000DD2A48000100000001 /* VisionOfferSource.swift */,
+				A10000DF2A48000100000001 /* HIDActionExecutor.swift */,
+				A10000FB2A48000100000001 /* AccessibilityActionExecutor.swift */,
+				A10000E12A48000100000001 /* AppSwitcher.swift */,
+				A10000E32A48000100000001 /* ConflictManager.swift */,
+				A10000E52A48000100000001 /* GeofenceManager.swift */,
+				A10000E72A48000100000001 /* RidePredictor.swift */,
+				A10000E92A48000100000001 /* DynamicRuleEngine.swift */,
+				A10000EB2A48000100000001 /* EarningsTracker.swift */,
+				A10000ED2A48000100000001 /* MystroLiveActivity.swift */,
+				A10000EF2A48000100000001 /* SyncManager.swift */,
+				A10000F12A48000100000001 /* MystroIntents.swift */,
+				A10000F32A48000100000001 /* AppGroupStore.swift */,
+				A10000F52A48000100000001 /* DashboardRelay.swift */,
+				A10000F62A48000100000001 /* LogBuffer.swift */,
 			);
 			path = Mystro/Mystro;
+			sourceTree = "<group>";
+		};
+		A200000F2A48000200000001 /* Mystro/MystroTests */ = {
+			isa = PBXGroup;
+			children = (
+				A20000102A48000200000001 /* MystroTests.swift */,
+			);
+			path = Mystro/MystroTests;
+			sourceTree = "<group>";
+		};
+		A400000F2A48000400000001 /* DestroUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A40000102A48000400000001 /* DestroUITests.swift */,
+			);
+			path = Mystro/DestroUITests;
+			sourceTree = "<group>";
+		};
+		A300000F2A48000300000001 /* Mystro/Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				A30000102A48000300000001 /* MystroWidget.swift */,
+				A30000132A48000300000001 /* Info.plist */,
+				A30000142A48000300000001 /* MystroWidget.entitlements */,
+			);
+			path = Mystro/Widgets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9D92987B2A485D5C00E4776C /* Mystro */ = {
+		9D92987B2A485D5C00E4776C /* Destro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9D92987E2A485D5C00E4776C /* Build configuration list for PBXNativeTarget "Mystro" */;
+			buildConfigurationList = 9D92987E2A485D5C00E4776C /* Build configuration list for PBXNativeTarget "Destro" */;
 			buildPhases = (
 				A10000092A48000100000001 /* Sources */,
 				A10000082A48000100000001 /* Frameworks */,
 				A100000A2A48000100000001 /* Resources */,
+				A300000B2A48000300000001 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				9D9298922A485D5C00E4776E /* PBXTargetDependency */,
 			);
-			name = Mystro;
-			productName = Mystro;
-			productReference = 9D92987F2A485D5C00E4776C /* Mystro.app */;
+			name = Destro;
+			productName = Destro;
+			productReference = 9D92987F2A485D5C00E4776C /* Destro.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9D9298802A485D5C00E4776D /* MystroTests */ = {
+		9D9298802A485D5C00E4776D /* DestroTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9D9298832A485D5C00E4776D /* Build configuration list for PBXNativeTarget "MystroTests" */;
+			buildConfigurationList = 9D9298832A485D5C00E4776D /* Build configuration list for PBXNativeTarget "DestroTests" */;
 			buildPhases = (
 				A20000032A48000200000001 /* Sources */,
 				A20000022A48000200000001 /* Frameworks */,
@@ -129,10 +263,44 @@
 			dependencies = (
 				9D9298822A485D5C00E4776D /* PBXTargetDependency */,
 			);
-			name = MystroTests;
-			productName = MystroTests;
-			productReference = A20000112A48000200000001 /* MystroTests.xctest */;
+			name = DestroTests;
+			productName = DestroTests;
+			productReference = 02D89D402F5A4952000FABAC /* DestroTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9D9298A02A485D5C00E47770 /* DestroUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9D9298A32A485D5C00E47770 /* Build configuration list for PBXNativeTarget "DestroUITests" */;
+			buildPhases = (
+				A40000032A48000400000001 /* Sources */,
+				A40000022A48000400000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9D9298A22A485D5C00E47770 /* PBXTargetDependency */,
+			);
+			name = DestroUITests;
+			productName = DestroUITests;
+			productReference = 02D89D412F5A4952000FABAD /* DestroUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		9D9298902A485D5C00E4776E /* DestroWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9D9298932A485D5C00E4776E /* Build configuration list for PBXNativeTarget "DestroWidgetExtension" */;
+			buildPhases = (
+				A30000092A48000300000001 /* Sources */,
+				A30000082A48000300000001 /* Frameworks */,
+				A300000A2A48000300000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DestroWidgetExtension;
+			productName = DestroWidgetExtension;
+			productReference = A30000112A48000300000001 /* DestroWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -157,8 +325,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9D92987B2A485D5C00E4776C /* Mystro */,
-				9D9298802A485D5C00E4776D /* MystroTests */,
+				9D92987B2A485D5C00E4776C /* Destro */,
+				9D9298902A485D5C00E4776E /* DestroWidgetExtension */,
+				9D9298802A485D5C00E4776D /* DestroTests */,
+				9D9298A02A485D5C00E47770 /* DestroUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -172,25 +342,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A300000A2A48000300000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		9D9298822A485D5C00E4776D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9D92987B2A485D5C00E4776C /* Mystro */;
-			targetProxy = 9D9298812A485D5C00E4776D /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXContainerItemProxy section */
-		9D9298812A485D5C00E4776D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9D92987C2A485D5C00E4776C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9D92987B2A485D5C00E4776C;
-			remoteInfo = Mystro;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A10000092A48000100000001 /* Sources */ = {
@@ -205,6 +364,22 @@
 				A10000072A48000100000007 /* DaemonTypes.swift in Sources */,
 				A10000082A48000100000008 /* ServiceReadinessStore.swift in Sources */,
 				A10000092A48000100000009 /* CriteriaEngine.swift in Sources */,
+				A10000DA2A4800010000000A /* AccessibilityOfferSource.swift in Sources */,
+				A10000DB2A4800010000000B /* VisionOfferSource.swift in Sources */,
+				A10000DE2A4800010000000C /* HIDActionExecutor.swift in Sources */,
+				A10000FA2A48000100000019 /* AccessibilityActionExecutor.swift in Sources */,
+				A10000E02A4800010000000D /* AppSwitcher.swift in Sources */,
+				A10000E22A4800010000000E /* ConflictManager.swift in Sources */,
+				A10000E42A4800010000000F /* GeofenceManager.swift in Sources */,
+				A10000E62A48000100000010 /* RidePredictor.swift in Sources */,
+				A10000E82A48000100000011 /* DynamicRuleEngine.swift in Sources */,
+				A10000EA2A48000100000012 /* EarningsTracker.swift in Sources */,
+				A10000EC2A48000100000013 /* MystroLiveActivity.swift in Sources */,
+				A10000EE2A48000100000014 /* SyncManager.swift in Sources */,
+				A10000F02A48000100000015 /* MystroIntents.swift in Sources */,
+				A10000F22A48000100000016 /* AppGroupStore.swift in Sources */,
+				A10000F42A48000100000017 /* DashboardRelay.swift in Sources */,
+				A10000F72A48000100000001 /* LogBuffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,9 +391,111 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A40000032A48000400000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A40000012A48000400000001 /* DestroUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A30000092A48000300000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A30000012A48000300000001 /* MystroWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		9D9298822A485D5C00E4776D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9D92987B2A485D5C00E4776C /* Destro */;
+			targetProxy = 9D9298812A485D5C00E4776D /* PBXContainerItemProxy */;
+		};
+		9D9298922A485D5C00E4776E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9D9298902A485D5C00E4776E /* DestroWidgetExtension */;
+			targetProxy = 9D9298912A485D5C00E4776E /* PBXContainerItemProxy */;
+		};
+		9D9298A22A485D5C00E47770 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9D92987B2A485D5C00E4776C /* Destro */;
+			targetProxy = 9D9298A12A485D5C00E47770 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		9D9298842A485D5C00E4776D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro.DestroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Destro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Destro";
+			};
+			name = Debug;
+		};
+		9D9298852A485D5C00E4776D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro.DestroTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Destro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Destro";
+			};
+			name = Release;
+		};
+		9D9298A42A485D5C00E47770 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro.DestroUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9D9298A52A485D5C00E47770 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro.DestroUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		A100000C2A48000100000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -256,6 +533,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -318,6 +596,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -345,6 +624,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = L35VLYNTLK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Mystro/Mystro/Info.plist;
@@ -355,7 +635,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mystro.app;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -372,6 +652,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = L35VLYNTLK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Mystro/Mystro/Info.plist;
@@ -382,7 +663,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mystro.app;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -390,50 +671,93 @@
 			};
 			name = Release;
 		};
-		9D9298842A485D5C00E4776D /* Debug */ = {
+		A300000E2A48000300000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = Mystro/Widgets/MystroWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
+				DEVELOPMENT_TEAM = L35VLYNTLK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Mystro/Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mystro.app.MystroTests;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mystro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mystro";
 			};
 			name = Debug;
 		};
-		9D9298852A485D5C00E4776D /* Release */ = {
+		A30000152A48000300000001 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = Mystro/Widgets/MystroWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
+				DEVELOPMENT_TEAM = L35VLYNTLK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Mystro/Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mystro.app.MystroTests;
+				PRODUCT_BUNDLE_IDENTIFIER = online.nextelevenstudios.destro.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mystro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mystro";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9D92987E2A485D5C00E4776C /* Build configuration list for PBXNativeTarget "Mystro" */ = {
+		9D92987E2A485D5C00E4776C /* Build configuration list for PBXNativeTarget "Destro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A100000E2A48000100000001 /* Debug */,
 				A10000152A48000100000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9D9298832A485D5C00E4776D /* Build configuration list for PBXNativeTarget "DestroTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D9298842A485D5C00E4776D /* Debug */,
+				9D9298852A485D5C00E4776D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9D9298932A485D5C00E4776E /* Build configuration list for PBXNativeTarget "DestroWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A300000E2A48000300000001 /* Debug */,
+				A30000152A48000300000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9D9298A32A485D5C00E47770 /* Build configuration list for PBXNativeTarget "DestroUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D9298A42A485D5C00E47770 /* Debug */,
+				9D9298A52A485D5C00E47770 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -443,15 +767,6 @@
 			buildConfigurations = (
 				A100000C2A48000100000001 /* Debug */,
 				A100000D2A48000100000001 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9D9298832A485D5C00E4776D /* Build configuration list for PBXNativeTarget "MystroTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				9D9298842A485D5C00E4776D /* Debug */,
-				9D9298852A485D5C00E4776D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

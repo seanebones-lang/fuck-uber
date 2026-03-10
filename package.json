@@ -1,13 +1,14 @@
 {
   "name": "fuck-uber",
   "version": "1.0.0",
-  "description": "Fuck Uber - Flawless Mystro Clones for all platforms/agents",
+  "description": "Fuck Uber - Flawless Destro Clones for all platforms/agents",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter ... dev",
-    "build": "pnpm --filter ... build",
-    "test": "pnpm --filter ... test",
-    "lint": "pnpm --filter ... lint",
+    "dev": "pnpm --filter \"*\" run dev",
+    "build": "pnpm --filter \"*\" run build",
+    "test": "node ./node_modules/vitest/vitest.mjs run shared/",
+    "test:dashboard": "cd dashboard && npm test -- --watchAll=false",
+    "lint": "pnpm --filter \"*\" run lint",
     "benchmark": "node shared/benchmark.js"
   },
   "devDependencies": {
