@@ -45,20 +45,33 @@ private enum AXOfferParser {
     var stops = 1
     var acceptPoint: CGPoint = .zero
     var rejectPoint: CGPoint?
+    var surgeMultiplier: Double?
+    var passengerRating: Double?
+    var rideType: RideType?
+    var pickupDistanceMiles: Double?
+    var collectedText: [String] = []
 
     let screenScale = UIScreen.main.scale
     func traverse(_ element: AXUIElementRef) {
       if let title = ax.copyAttributeString(element, kAXTitleAttribute) {
         let t = title as String
+        collectedText.append(t)
         if price == nil, let p = parsePrice(t) { price = p }
         if let m = parseMiles(t) { miles = m }
         if t.lowercased().contains("shared") { shared = true }
         if let s = parseStops(t) { stops = s }
+        if surgeMultiplier == nil, let s = parseSurge(t) { surgeMultiplier = s }
+        if passengerRating == nil, let r = parseRating(t) { passengerRating = r }
+        if pickupDistanceMiles == nil, let d = parsePickupDistance(t) { pickupDistanceMiles = d }
       }
       if let value = ax.copyAttributeString(element, kAXValueAttribute) {
         let t = value as String
+        collectedText.append(t)
         if price == nil, let p = parsePrice(t) { price = p }
         if let m = parseMiles(t) { miles = m }
+        if surgeMultiplier == nil, let s = parseSurge(t) { surgeMultiplier = s }
+        if passengerRating == nil, let r = parseRating(t) { passengerRating = r }
+        if pickupDistanceMiles == nil, let d = parsePickupDistance(t) { pickupDistanceMiles = d }
       }
       if let role = ax.copyAttributeString(element, kAXRoleAttribute), (role as String) == "AXButton" {
         if let frame = ax.copyAttributeFrame(element) {
@@ -87,14 +100,68 @@ private enum AXOfferParser {
       acceptPoint = CGPoint(x: bounds.midX, y: bounds.maxY - 80)
     }
 
+    if rideType == nil {
+      rideType = parseRideType(from: collectedText.joined(separator: " "), bundleId: bundleId)
+    }
+    let estMiles = miles > 0 ? miles : 1
+    let estimatedHourlyRate: Double? = (estMiles > 0 && p > 0) ? (p / (estMiles / 30.0)) : nil
+
     return OfferData(
       price: p,
-      miles: miles > 0 ? miles : 1,
+      miles: estMiles,
       shared: shared,
       stops: stops,
       acceptPoint: acceptPoint,
-      rejectPoint: rejectPoint
+      rejectPoint: rejectPoint,
+      pickupLocation: nil,
+      dropoffLocation: nil,
+      estimatedMinutes: nil,
+      passengerRating: passengerRating,
+      surgeMultiplier: surgeMultiplier,
+      rideType: rideType,
+      pickupDistanceMiles: pickupDistanceMiles,
+      estimatedHourlyRate: estimatedHourlyRate
     )
+  }
+
+  private static func parseSurge(_ text: String) -> Double? {
+    let pattern = #"(\d+(?:\.\d+)?)\s*[x×]"#
+    guard let regex = try? NSRegularExpression(pattern: pattern),
+          let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+          let range = Range(match.range(at: 1), in: text) else { return nil }
+    return Double(text[range])
+  }
+
+  private static func parseRating(_ text: String) -> Double? {
+    let pattern = #"(?:rating|rider)?\s*(\d+(?:\.\d+)?)\s*(?:rating|stars?)?"#
+    guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+          let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+          let range = Range(match.range(at: 1), in: text),
+          let v = Double(text[range]), v >= 1, v <= 5 else { return nil }
+    return v
+  }
+
+  private static func parsePickupDistance(_ text: String) -> Double? {
+    let pattern = #"(\d+(?:\.\d+)?)\s*mi(?:les)?\s*(?:away|to\s*pickup|to\s*passenger)?"#
+    guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+          let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+          let range = Range(match.range(at: 1), in: text) else { return nil }
+    return Double(text[range])
+  }
+
+  private static func parseRideType(from text: String, bundleId: String) -> RideType? {
+    let lower = text.lowercased()
+    if bundleId.contains("uber") {
+      if lower.contains("uber black") || lower.contains("black") { return .uberBlack }
+      if lower.contains("uber xl") || lower.contains("uberxl") || lower.contains(" xl ") { return .uberXL }
+      if lower.contains("uberx") || lower.contains("uber x") { return .uberX }
+    }
+    if bundleId.contains("lyft") {
+      if lower.contains("lyft lux") || lower.contains("lux") { return .lyftLux }
+      if lower.contains("lyft xl") || lower.contains("lyftxl") { return .lyftXL }
+      if lower.contains("lyft standard") || lower.contains("standard") { return .lyftStandard }
+    }
+    return nil
   }
 
   private static func parsePrice(_ text: String) -> Double? {

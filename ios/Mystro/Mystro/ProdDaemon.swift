@@ -65,6 +65,9 @@ class ProdDaemon {
   /// Pending offer for confirm-before-accept mode. Cleared after user accepts/declines or timeout.
   private var pendingConfirmOffer: (offer: OfferData, app: String)?
 
+  /// Last offer seen (for manual accept/reject when auto-accept is off). Set whenever we post destroOfferSeen.
+  private var lastSeenOffer: (offer: OfferData, app: String)?
+
   /// Current daemon state for observers and tests.
   private(set) var state: DaemonState = .idle {
     didSet {
@@ -176,15 +179,17 @@ class ProdDaemon {
           }
           if let offer = offer {
             self.state = .decisioning(app: app)
-            let decision = self.decide(offer)
+            let decision = self.decide(offer, appBundleId: app)
+            self.lastSeenOffer = (offer, app)
             let offerInfo = Self.offerBreakdownUserInfo(offer: offer, app: app, decision: decision)
             NotificationCenter.default.post(name: .destroOfferSeen, object: nil, userInfo: offerInfo)
 
             let latencyMs = 38
+            let svc = FilterConfig.service(from: app)
             switch decision {
             case .accept(let reason):
-              if FilterConfig.autoAccept {
-                if FilterConfig.requireConfirmBeforeAccept {
+              if FilterConfig.autoAccept(service: svc) {
+                if FilterConfig.requireConfirmBeforeAccept(service: svc) {
                   self.pendingConfirmOffer = (offer, app)
                   var confirmInfo = offerInfo
                   confirmInfo["reason"] = reason.rawValue
@@ -218,7 +223,8 @@ class ProdDaemon {
               self.state = .cooldown
               try? await Task.sleep(nanoseconds: Config.cooldownMs)
             case .reject(let reason):
-              if FilterConfig.autoReject, let rejectPoint = offer.rejectPoint {
+              let rejectPoint = offer.rejectPoint ?? CGPoint(x: UIScreen.main.bounds.minX + 60, y: UIScreen.main.bounds.maxY - 80)
+              if FilterConfig.autoReject(service: svc) {
                 await self.bringDriverAppToForeground(bundleId: app)
                 try? await Task.sleep(nanoseconds: 400_000_000)
                 let rejectOk = executor.executeReject(at: rejectPoint, appBundleId: app)
@@ -274,9 +280,9 @@ class ProdDaemon {
     state = .idle
   }
 
-  /// Returns accept or reject with reason. Delegates to CriteriaEngine.
-  func decide(_ data: OfferData) -> RideDecision {
-    CriteriaEngine.evaluate(data)
+  /// Returns accept or reject with reason. Delegates to CriteriaEngine (service-scoped).
+  func decide(_ data: OfferData, appBundleId: String) -> RideDecision {
+    CriteriaEngine.evaluate(data, appBundleId: appBundleId)
   }
 
   /// Call from UI when user taps "Accept" on the confirm-before-accept alert. Performs the stored pending accept (tap + conflict + poller). Uses same bring-to-foreground as daemon (URL fallback on stock iOS), then returns to Destro.
@@ -315,6 +321,45 @@ class ProdDaemon {
   /// Clear pending confirm offer (e.g. user tapped Decline).
   func clearPendingConfirm() {
     pendingConfirmOffer = nil
+  }
+
+  /// Call from UI when user taps manual Accept on the offer card (auto-accept off). Uses last seen offer.
+  func performManualAccept() {
+    guard let last = lastSeenOffer else { return }
+    lastSeenOffer = nil
+    let (offer, app) = last
+    Task { [weak self] in
+      guard let self else { return }
+      await self.bringDriverAppToForeground(bundleId: app)
+      try? await Task.sleep(nanoseconds: 400_000_000)
+      await MainActor.run {
+        self.performPendingAcceptAfterDelay(offer: offer, app: app)
+      }
+      await self.bringDestroToForeground()
+    }
+  }
+
+  /// Call from UI when user taps manual Reject on the offer card. Uses last seen offer; fallback point if rejectPoint nil.
+  func performManualReject() {
+    guard let last = lastSeenOffer else { return }
+    lastSeenOffer = nil
+    let (offer, app) = last
+    let rejectPoint = offer.rejectPoint ?? CGPoint(x: UIScreen.main.bounds.minX + 60, y: UIScreen.main.bounds.maxY - 80)
+    Task { [weak self] in
+      guard let self else { return }
+      await self.bringDriverAppToForeground(bundleId: app)
+      try? await Task.sleep(nanoseconds: 400_000_000)
+      await MainActor.run {
+        let ok = self.actionExecutor.executeReject(at: rejectPoint, appBundleId: app)
+        if ok { Self.hapticDecision() }
+        else {
+          NotificationCenter.default.post(name: .destroRejectTapFailed, object: nil, userInfo: ["app": app, "price": offer.price, "reason": "manual"])
+        }
+      }
+      ProdDaemon.lastDecisionTime = Date()
+      Metrics.pubDecision(app: app, decision: .reject(reason: .autoAcceptDisabled), offer: offer)
+      await self.bringDestroToForeground()
+    }
   }
 
   private func parseDouble(_ text: String?) -> Double? {

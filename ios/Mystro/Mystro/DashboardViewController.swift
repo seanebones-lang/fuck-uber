@@ -89,8 +89,12 @@ final class DashboardViewController: UIViewController {
   private var earningsTimer: Timer?
   private var didPromptResumeThisLaunch = false
   private var lastOfferBreakdownText: String?
+  private var lastSeenOfferApp: String?
   private let offerBreakdownLabel = UILabel()
   private let offerSectionContainer = UIView()
+  private let manualAcceptButton = UIButton(type: .system)
+  private let manualRejectButton = UIButton(type: .system)
+  private var offerManualButtonsRow: UIStackView?
 
   override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -156,7 +160,8 @@ final class DashboardViewController: UIViewController {
   }
 
   @objc private func offerSeen(_ notification: Notification) {
-    guard let info = notification.userInfo else { return }
+    guard let info = notification.userInfo as? [String: Any] else { return }
+    lastSeenOfferApp = info["app"] as? String
     let decision = info["decision"] as? String ?? ""
     lastOfferBreakdownText = formatOfferBreakdown(info: info, style: .card(decision: decision))
     DispatchQueue.main.async { [weak self] in
@@ -170,9 +175,13 @@ final class DashboardViewController: UIViewController {
       if let text = lastOfferBreakdownText, !text.isEmpty {
         offerBreakdownLabel.text = text
         offerBreakdownLabel.textColor = DestroUI.textPrimary
+        let app = lastSeenOfferApp ?? "com.ubercab.driver"
+        let showManual = !FilterConfig.autoAccept(service: FilterConfig.service(from: app))
+        offerManualButtonsRow?.isHidden = !showManual
       } else {
         offerBreakdownLabel.text = "No offer detected.\nDestro cycles between Uber and Lyft; when a request appears it will show here."
         offerBreakdownLabel.textColor = DestroUI.textSecondary
+        offerManualButtonsRow?.isHidden = true
       }
     } else {
       offerSectionContainer.isHidden = true
@@ -182,7 +191,7 @@ final class DashboardViewController: UIViewController {
   @objc private func confirmAcceptRequested(_ notification: Notification) {
     DispatchQueue.main.async { [weak self] in
       guard let self else { return }
-      let info = notification.userInfo ?? [:]
+      let info = (notification.userInfo as? [String: Any]) ?? [:]
       let message = formatOfferBreakdown(info: info, style: .alert)
       let alert = UIAlertController(
         title: "Accept ride?",
@@ -385,6 +394,20 @@ final class DashboardViewController: UIViewController {
     refreshEarningsAndConflict()
   }
 
+  @objc private func manualAcceptTapped() {
+    DaemonHolder.shared.daemon?.performManualAccept()
+    lastOfferBreakdownText = nil
+    updateOfferBreakdownDisplay()
+    refreshEarningsAndConflict()
+  }
+
+  @objc private func manualRejectTapped() {
+    DaemonHolder.shared.daemon?.performManualReject()
+    lastOfferBreakdownText = nil
+    updateOfferBreakdownDisplay()
+    refreshEarningsAndConflict()
+  }
+
   private func loadState() {
     let d = UserDefaults.standard
     uberEnabled = d.bool(forKey: "destro.uber.enabled")
@@ -458,10 +481,24 @@ final class DashboardViewController: UIViewController {
     offerBreakdownLabel.numberOfLines = 0
     offerBreakdownLabel.text = "No offer detected.\nDestro cycles between Uber and Lyft; when a request appears it will show here."
     offerBreakdownLabel.textColor = DestroUI.textSecondary
+    manualAcceptButton.setTitle("Accept", for: .normal)
+    manualAcceptButton.setTitleColor(DestroUI.accentOrange, for: .normal)
+    manualAcceptButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+    manualAcceptButton.addTarget(self, action: #selector(manualAcceptTapped), for: .touchUpInside)
+    manualAcceptButton.accessibilityLabel = "Accept this offer"
+    manualRejectButton.setTitle("Reject", for: .normal)
+    manualRejectButton.setTitleColor(DestroUI.textSecondary, for: .normal)
+    manualRejectButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .medium)
+    manualRejectButton.addTarget(self, action: #selector(manualRejectTapped), for: .touchUpInside)
+    manualRejectButton.accessibilityLabel = "Reject this offer"
+    let manualButtonsRow = UIStackView(arrangedSubviews: [manualAcceptButton, manualRejectButton])
+    manualButtonsRow.axis = .horizontal
+    manualButtonsRow.spacing = 16
+    offerManualButtonsRow = manualButtonsRow
     offerSectionContainer.backgroundColor = DestroUI.cardBackground
     offerSectionContainer.layer.cornerRadius = DestroUI.cornerRadius
     offerSectionContainer.translatesAutoresizingMaskIntoConstraints = false
-    let offerStack = UIStackView(arrangedSubviews: [offerTitle, offerBreakdownLabel])
+    let offerStack = UIStackView(arrangedSubviews: [offerTitle, offerBreakdownLabel, manualButtonsRow])
     offerStack.axis = .vertical
     offerStack.spacing = 8
     offerStack.translatesAutoresizingMaskIntoConstraints = false
@@ -472,6 +509,7 @@ final class DashboardViewController: UIViewController {
       offerStack.topAnchor.constraint(equalTo: offerSectionContainer.topAnchor, constant: 16),
       offerStack.bottomAnchor.constraint(equalTo: offerSectionContainer.bottomAnchor, constant: -16),
     ])
+    manualButtonsRow.isHidden = true
     offerSectionContainer.isHidden = true
     stack.addArrangedSubview(offerSectionContainer)
 
@@ -1052,7 +1090,7 @@ final class DashboardViewController: UIViewController {
     lyftCard.refreshReadiness()
   }
 
-  /// Open the driver app via its URL scheme (Mystro-style ↗️). Use from Destro so we recognize you're online.
+  /// Open the driver app via its URL scheme (Mystro-style ↗️). Use from Destro so we recognize you're online. Checks canOpenURL and alerts if app not installed.
   private func openDriverApp(service: String) {
     let bundleId: String
     switch service.lowercased() {
@@ -1060,9 +1098,25 @@ final class DashboardViewController: UIViewController {
     case "lyft": bundleId = "me.lyft.driver"
     default: return
     }
-    if let url = URL(string: "\(bundleId)://") {
-      UIApplication.shared.open(url)
+    guard let url = URL(string: "\(bundleId)://") else { return }
+    if !UIApplication.shared.canOpenURL(url) {
+      let appName = (service.lowercased() == "uber" || service.lowercased() == "lyft") ? "\(service) Driver" : service
+      let alert = UIAlertController(
+        title: "\(appName) not available",
+        message: "The \(appName) app does not appear to be installed or cannot be opened. Install it from the App Store and try again.",
+        preferredStyle: .alert
+      )
+      alert.addAction(UIAlertAction(title: "App Store", style: .default) { _ in
+        let storeURL: URL? = service.lowercased() == "uber"
+          ? URL(string: "https://apps.apple.com/app/uber-driver/id1131342792")
+          : URL(string: "https://apps.apple.com/app/lyft-driver/id905997506")
+        if let u = storeURL { UIApplication.shared.open(u) }
+      })
+      alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+      present(alert, animated: true)
+      return
     }
+    UIApplication.shared.open(url)
   }
 
   private func confirmUnlink(service: String, bundleId: String) {
@@ -1223,8 +1277,9 @@ final class ServiceCard: UIView {
   }
 
   func refreshAutoState() {
-    autoAcceptButton.setTitle(FilterConfig.autoAccept ? " Auto-accept" : " Auto-accept (off)", for: .normal)
-    autoRejectButton.setTitle(FilterConfig.autoReject ? " Auto-reject" : " Auto-reject (off)", for: .normal)
+    let svc = FilterConfig.service(from: bundleId)
+    autoAcceptButton.setTitle(FilterConfig.autoAccept(service: svc) ? " Auto-accept" : " Auto-accept (off)", for: .normal)
+    autoRejectButton.setTitle(FilterConfig.autoReject(service: svc) ? " Auto-reject" : " Auto-reject (off)", for: .normal)
   }
 
   required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -1236,12 +1291,14 @@ final class ServiceCard: UIView {
   @objc private func openTapped() { onOpenTap?() }
   @objc private func setPIDTapped() { onSetPIDTap?(bundleId, serviceName) }
   @objc private func autoAcceptTapped() {
-    FilterConfig.autoAccept.toggle()
-    autoAcceptButton.setTitle(FilterConfig.autoAccept ? " Auto-accept" : " Auto-accept (off)", for: .normal)
+    let svc = FilterConfig.service(from: bundleId)
+    FilterConfig.setAutoAccept(!FilterConfig.autoAccept(service: svc), service: svc)
+    refreshAutoState()
   }
   @objc private func autoRejectTapped() {
-    FilterConfig.autoReject.toggle()
-    autoRejectButton.setTitle(FilterConfig.autoReject ? " Auto-reject" : " Auto-reject (off)", for: .normal)
+    let svc = FilterConfig.service(from: bundleId)
+    FilterConfig.setAutoReject(!FilterConfig.autoReject(service: svc), service: svc)
+    refreshAutoState()
   }
 }
 
@@ -1309,6 +1366,7 @@ extension DashboardViewController {
 @MainActor
 final class FiltersViewController: UIViewController {
   private let service: String
+  private var serviceKey: String { service.lowercased() }
   private let minPriceField = UITextField()
   private let minPerMileField = UITextField()
   private let minHourlyField = UITextField()
@@ -1346,20 +1404,21 @@ final class FiltersViewController: UIViewController {
     navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissTap))
     navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveTap))
 
-    minPriceField.text = String(format: "%.0f", FilterConfig.minPrice)
-    minPerMileField.text = String(format: "%.2f", FilterConfig.minPricePerMile)
-    minHourlyField.text = String(format: "%.0f", FilterConfig.minHourlyRate)
-    maxPickupField.text = String(format: "%.1f", FilterConfig.maxPickupDistance)
-    minPassengerRatingField.text = String(format: "%.1f", FilterConfig.minPassengerRating)
-    minSurgeField.text = String(format: "%.2f", FilterConfig.minSurgeMultiplier)
-    autoAcceptSwitch.isOn = FilterConfig.autoAccept
+    let sk = serviceKey
+    minPriceField.text = String(format: "%.0f", FilterConfig.minPrice(service: sk))
+    minPerMileField.text = String(format: "%.2f", FilterConfig.minPricePerMile(service: sk))
+    minHourlyField.text = String(format: "%.0f", FilterConfig.minHourlyRate(service: sk))
+    maxPickupField.text = String(format: "%.1f", FilterConfig.maxPickupDistance(service: sk))
+    minPassengerRatingField.text = String(format: "%.1f", FilterConfig.minPassengerRating(service: sk))
+    minSurgeField.text = String(format: "%.2f", FilterConfig.minSurgeMultiplier(service: sk))
+    autoAcceptSwitch.isOn = FilterConfig.autoAccept(service: sk)
     autoAcceptSwitch.onTintColor = DestroUI.accentOrange
-    autoRejectSwitch.isOn = FilterConfig.autoReject
+    autoRejectSwitch.isOn = FilterConfig.autoReject(service: sk)
     autoRejectSwitch.onTintColor = DestroUI.accentOrange
-    requireConfirmSwitch.isOn = FilterConfig.requireConfirmBeforeAccept
+    requireConfirmSwitch.isOn = FilterConfig.requireConfirmBeforeAccept(service: sk)
     requireConfirmSwitch.onTintColor = DestroUI.accentOrange
-    activeStartField.text = String(FilterConfig.activeHoursStart)
-    activeEndField.text = String(FilterConfig.activeHoursEnd)
+    activeStartField.text = String(FilterConfig.activeHoursStart(service: sk))
+    activeEndField.text = String(FilterConfig.activeHoursEnd(service: sk))
 
     let minPriceLabel = makeLabel("Min trip ($)")
     let minPerMileLabel = makeLabel("Min $/mile")
@@ -1421,7 +1480,7 @@ final class FiltersViewController: UIViewController {
     for type in RideType.allCases {
       let rowLabel = makeLabel("Block \(type.displayName)")
       let sw = UISwitch()
-      sw.isOn = FilterConfig.blockedRideTypes.contains(type)
+      sw.isOn = FilterConfig.blockedRideTypes(service: serviceKey).contains(type)
       sw.onTintColor = DestroUI.accentOrange
       blockedRideTypeSwitches[type] = sw
       let row = UIStackView(arrangedSubviews: [rowLabel, sw])
@@ -1539,20 +1598,22 @@ final class FiltersViewController: UIViewController {
     refreshGeofenceZoneRows()
   }
 
-  @objc private func dismissTap() { dismiss(animated: true) }
+    @objc private func dismissTap() { dismiss(animated: true) }
   @objc private func saveTap() {
-    if let p = Double(minPriceField.text ?? ""), p >= 0 { FilterConfig.minPrice = p }
-    if let m = Double(minPerMileField.text ?? ""), m >= 0 { FilterConfig.minPricePerMile = m }
-    if let h = Double(minHourlyField.text ?? ""), h >= 0 { FilterConfig.minHourlyRate = h }
-    if let d = Double(maxPickupField.text ?? ""), d >= 0 { FilterConfig.maxPickupDistance = d }
-    if let r = Double(minPassengerRatingField.text ?? ""), (0...5).contains(r) { FilterConfig.minPassengerRating = r }
-    if let s = Double(minSurgeField.text ?? ""), s >= 0 { FilterConfig.minSurgeMultiplier = s }
-    FilterConfig.blockedRideTypes = RideType.allCases.filter { blockedRideTypeSwitches[$0]?.isOn == true }
-    FilterConfig.autoAccept = autoAcceptSwitch.isOn
-    FilterConfig.autoReject = autoRejectSwitch.isOn
-    FilterConfig.requireConfirmBeforeAccept = requireConfirmSwitch.isOn
-    if let s = Int(activeStartField.text ?? ""), (0...23).contains(s) { FilterConfig.activeHoursStart = s }
-    if let e = Int(activeEndField.text ?? ""), (0...23).contains(e) { FilterConfig.activeHoursEnd = e }
+    let sk = serviceKey
+    if let p = Double(minPriceField.text ?? ""), p >= 0 { FilterConfig.setMinPrice(p, service: sk) }
+    if let m = Double(minPerMileField.text ?? ""), m >= 0 { FilterConfig.setMinPricePerMile(m, service: sk) }
+    if let h = Double(minHourlyField.text ?? ""), h >= 0 { FilterConfig.setMinHourlyRate(h, service: sk) }
+    if let d = Double(maxPickupField.text ?? ""), d >= 0 { FilterConfig.setMaxPickupDistance(d, service: sk) }
+    if let r = Double(minPassengerRatingField.text ?? ""), (0...5).contains(r) { FilterConfig.setMinPassengerRating(r, service: sk) }
+    if let s = Double(minSurgeField.text ?? ""), s >= 0 { FilterConfig.setMinSurgeMultiplier(s, service: sk) }
+    FilterConfig.setBlockedRideTypes(RideType.allCases.filter { blockedRideTypeSwitches[$0]?.isOn == true }, service: sk)
+    FilterConfig.setAutoAccept(autoAcceptSwitch.isOn, service: sk)
+    FilterConfig.setAutoReject(autoRejectSwitch.isOn, service: sk)
+    FilterConfig.setRequireConfirmBeforeAccept(requireConfirmSwitch.isOn, service: sk)
+    if let s = Int(activeStartField.text ?? ""), (0...23).contains(s) { FilterConfig.setActiveHoursStart(s, service: sk) }
+    if let e = Int(activeEndField.text ?? ""), (0...23).contains(e) { FilterConfig.setActiveHoursEnd(e, service: sk) }
+    SyncManager.shared.syncToCloud()
     dismiss(animated: true)
   }
 }
@@ -1643,6 +1704,7 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
       "low_passenger_rating": "low rider rating",
       "below_surge_threshold": "below surge",
       "blocked_ride_type": "blocked ride type",
+      "below_ride_quality": "below ride quality",
       "meets_criteria": "met criteria"
     ]
     return map[r] ?? r.replacingOccurrences(of: "_", with: " ")

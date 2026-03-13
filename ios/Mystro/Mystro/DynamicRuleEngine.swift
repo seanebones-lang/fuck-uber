@@ -48,11 +48,11 @@ final class DynamicRuleEngine {
     var maxPickupDistance: Double
   }
 
-  func effectiveThresholds(idleMinutes: Double = 0) -> EffectiveThresholds {
+  func effectiveThresholds(idleMinutes: Double = 0, service: String = "uber") -> EffectiveThresholds {
     EffectiveThresholds(
-      minPrice: effectiveMinPrice(base: FilterConfig.minPrice, idleMinutes: idleMinutes),
-      minPricePerMile: effectiveMinPricePerMile(base: FilterConfig.minPricePerMile),
-      maxPickupDistance: effectiveMaxPickupDistance(base: FilterConfig.maxPickupDistance)
+      minPrice: effectiveMinPrice(base: FilterConfig.minPrice(service: service), idleMinutes: idleMinutes),
+      minPricePerMile: effectiveMinPricePerMile(base: FilterConfig.minPricePerMile(service: service)),
+      maxPickupDistance: effectiveMaxPickupDistance(base: FilterConfig.maxPickupDistance(service: service))
     )
   }
 }

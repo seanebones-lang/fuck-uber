@@ -19,7 +19,6 @@
 		A10000DA2A4800010000000A /* AccessibilityOfferSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000DC2A48000100000001 /* AccessibilityOfferSource.swift */; };
 		A10000DB2A4800010000000B /* VisionOfferSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000DD2A48000100000001 /* VisionOfferSource.swift */; };
 		A10000DE2A4800010000000C /* HIDActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000DF2A48000100000001 /* HIDActionExecutor.swift */; };
-		A10000FA2A48000100000019 /* AccessibilityActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000FB2A48000100000001 /* AccessibilityActionExecutor.swift */; };
 		A10000E02A4800010000000D /* AppSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E12A48000100000001 /* AppSwitcher.swift */; };
 		A10000E22A4800010000000E /* ConflictManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E32A48000100000001 /* ConflictManager.swift */; };
 		A10000E42A4800010000000F /* GeofenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000E52A48000100000001 /* GeofenceManager.swift */; };
@@ -32,6 +31,7 @@
 		A10000F22A48000100000016 /* AppGroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000F32A48000100000001 /* AppGroupStore.swift */; };
 		A10000F42A48000100000017 /* DashboardRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000F52A48000100000001 /* DashboardRelay.swift */; };
 		A10000F72A48000100000001 /* LogBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000F62A48000100000001 /* LogBuffer.swift */; };
+		A10000FA2A48000100000019 /* AccessibilityActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000FB2A48000100000001 /* AccessibilityActionExecutor.swift */; };
 		A20000012A48000200000001 /* MystroTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000102A48000200000001 /* MystroTests.swift */; };
 		A30000012A48000300000001 /* MystroWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30000102A48000300000001 /* MystroWidget.swift */; };
 		A30000022A48000300000002 /* DestroWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A30000112A48000300000001 /* DestroWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -78,6 +78,7 @@
 
 /* Begin PBXFileReference section */
 		02D89D402F5A4952000FABAC /* DestroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DestroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		02D89D412F5A4952000FABAD /* DestroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DestroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D92987F2A485D5C00E4776C /* Destro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Destro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000102A48000100000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A10000112A48000100000001 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -93,7 +94,6 @@
 		A10000DC2A48000100000001 /* AccessibilityOfferSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityOfferSource.swift; sourceTree = "<group>"; };
 		A10000DD2A48000100000001 /* VisionOfferSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionOfferSource.swift; sourceTree = "<group>"; };
 		A10000DF2A48000100000001 /* HIDActionExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIDActionExecutor.swift; sourceTree = "<group>"; };
-		A10000FB2A48000100000001 /* AccessibilityActionExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityActionExecutor.swift; sourceTree = "<group>"; };
 		A10000E12A48000100000001 /* AppSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSwitcher.swift; sourceTree = "<group>"; };
 		A10000E32A48000100000001 /* ConflictManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictManager.swift; sourceTree = "<group>"; };
 		A10000E52A48000100000001 /* GeofenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofenceManager.swift; sourceTree = "<group>"; };
@@ -106,12 +106,12 @@
 		A10000F32A48000100000001 /* AppGroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupStore.swift; sourceTree = "<group>"; };
 		A10000F52A48000100000001 /* DashboardRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardRelay.swift; sourceTree = "<group>"; };
 		A10000F62A48000100000001 /* LogBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogBuffer.swift; sourceTree = "<group>"; };
+		A10000FB2A48000100000001 /* AccessibilityActionExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityActionExecutor.swift; sourceTree = "<group>"; };
 		A20000102A48000200000001 /* MystroTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MystroTests.swift; sourceTree = "<group>"; };
 		A30000102A48000300000001 /* MystroWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MystroWidget.swift; sourceTree = "<group>"; };
 		A30000112A48000300000001 /* DestroWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DestroWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A30000132A48000300000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A30000142A48000300000001 /* MystroWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MystroWidget.entitlements; sourceTree = "<group>"; };
-		02D89D412F5A4952000FABAD /* DestroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DestroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A40000102A48000400000001 /* DestroUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestroUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,14 +130,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A40000022A48000400000001 /* Frameworks */ = {
+		A30000082A48000300000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A30000082A48000300000001 /* Frameworks */ = {
+		A40000022A48000400000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -153,7 +153,7 @@
 				A100000F2A48000100000001 /* Mystro/Mystro */,
 				A300000F2A48000300000001 /* Mystro/Widgets */,
 				A200000F2A48000200000001 /* Mystro/MystroTests */,
-				A400000F2A48000400000001 /* DestroUITests */,
+				A400000F2A48000400000001 /* Mystro/DestroUITests */,
 				9D92987D2A485D5C00E4776C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -211,14 +211,6 @@
 			path = Mystro/MystroTests;
 			sourceTree = "<group>";
 		};
-		A400000F2A48000400000001 /* DestroUITests */ = {
-			isa = PBXGroup;
-			children = (
-				A40000102A48000400000001 /* DestroUITests.swift */,
-			);
-			path = Mystro/DestroUITests;
-			sourceTree = "<group>";
-		};
 		A300000F2A48000300000001 /* Mystro/Widgets */ = {
 			isa = PBXGroup;
 			children = (
@@ -227,6 +219,14 @@
 				A30000142A48000300000001 /* MystroWidget.entitlements */,
 			);
 			path = Mystro/Widgets;
+			sourceTree = "<group>";
+		};
+		A400000F2A48000400000001 /* Mystro/DestroUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A40000102A48000400000001 /* DestroUITests.swift */,
+			);
+			path = Mystro/DestroUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,23 +268,6 @@
 			productReference = 02D89D402F5A4952000FABAC /* DestroTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		9D9298A02A485D5C00E47770 /* DestroUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9D9298A32A485D5C00E47770 /* Build configuration list for PBXNativeTarget "DestroUITests" */;
-			buildPhases = (
-				A40000032A48000400000001 /* Sources */,
-				A40000022A48000400000001 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				9D9298A22A485D5C00E47770 /* PBXTargetDependency */,
-			);
-			name = DestroUITests;
-			productName = DestroUITests;
-			productReference = 02D89D412F5A4952000FABAD /* DestroUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		9D9298902A485D5C00E4776E /* DestroWidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9D9298932A485D5C00E4776E /* Build configuration list for PBXNativeTarget "DestroWidgetExtension" */;
@@ -301,6 +284,23 @@
 			productName = DestroWidgetExtension;
 			productReference = A30000112A48000300000001 /* DestroWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		9D9298A02A485D5C00E47770 /* DestroUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9D9298A32A485D5C00E47770 /* Build configuration list for PBXNativeTarget "DestroUITests" */;
+			buildPhases = (
+				A40000032A48000400000001 /* Sources */,
+				A40000022A48000400000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9D9298A22A485D5C00E47770 /* PBXTargetDependency */,
+			);
+			name = DestroUITests;
+			productName = DestroUITests;
+			productReference = 02D89D412F5A4952000FABAD /* DestroUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -391,19 +391,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A40000032A48000400000001 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A40000012A48000400000001 /* DestroUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A30000092A48000300000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A30000012A48000300000001 /* MystroWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A40000032A48000400000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A40000012A48000400000001 /* DestroUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

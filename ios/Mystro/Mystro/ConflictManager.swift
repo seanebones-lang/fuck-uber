@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 // MARK: - ConflictState
 
@@ -10,6 +11,7 @@ enum ConflictState: Equatable {
 
 // MARK: - ConflictManager
 // When a ride is accepted on one app, takes the other app offline. On ride completion, brings other app back online.
+// Uses URL-scheme fallback on stock iOS when private API (bringToForeground) is unavailable.
 
 final class ConflictManager {
 
@@ -37,12 +39,17 @@ final class ConflictManager {
     }
   }
 
-  /// Call when ride is completed (detected via polling or accessibility). Brings other app back online.
+  /// Call when ride is completed (detected via polling or accessibility). Brings other app back online. Uses URL fallback on stock iOS.
   func rideCompleted(wasActiveAppBundleId: String) {
     state = .transitioning
     let other = otherBundleId(than: wasActiveAppBundleId)
     if !other.isEmpty {
-      _ = appSwitcher.bringToForeground(bundleId: other)
+      let didSwitch = appSwitcher.bringToForeground(bundleId: other)
+      if !didSwitch, let url = URL(string: "\(other)://") {
+        DispatchQueue.main.async {
+          UIApplication.shared.open(url)
+        }
+      }
     }
     state = .idle
   }

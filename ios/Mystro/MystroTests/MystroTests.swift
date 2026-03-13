@@ -13,7 +13,7 @@ final class CriteriaEngineTests: XCTestCase {
       acceptPoint: .zero,
       rejectPoint: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .accept(reason: .meetsCriteria) = decision else {
       XCTFail("expected accept(meetsCriteria), got \(decision)")
       return
@@ -29,7 +29,7 @@ final class CriteriaEngineTests: XCTestCase {
       acceptPoint: .zero,
       rejectPoint: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .belowMinPrice) = decision else {
       XCTFail("expected reject(belowMinPrice), got \(decision)")
       return
@@ -45,7 +45,7 @@ final class CriteriaEngineTests: XCTestCase {
       acceptPoint: .zero,
       rejectPoint: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .belowMinPricePerMile) = decision else {
       XCTFail("expected reject(belowMinPricePerMile), got \(decision)")
       return
@@ -61,7 +61,7 @@ final class CriteriaEngineTests: XCTestCase {
       acceptPoint: .zero,
       rejectPoint: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .sharedRide) = decision else {
       XCTFail("expected reject(sharedRide), got \(decision)")
       return
@@ -77,7 +77,7 @@ final class CriteriaEngineTests: XCTestCase {
       acceptPoint: .zero,
       rejectPoint: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .tooManyStops) = decision else {
       XCTFail("expected reject(tooManyStops), got \(decision)")
       return
@@ -94,7 +94,7 @@ final class CriteriaEngineTests: XCTestCase {
       acceptPoint: .zero,
       rejectPoint: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .accept(reason: .meetsCriteria) = decision else {
       XCTFail("expected accept(meetsCriteria) for 0 stops (direct trip), got \(decision)")
       return
@@ -118,7 +118,7 @@ final class CriteriaEngineTests: XCTestCase {
       pickupDistanceMiles: nil,
       estimatedHourlyRate: 20
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .belowMinHourlyRate) = decision else {
       XCTFail("expected reject(belowMinHourlyRate), got \(decision)")
       return
@@ -142,7 +142,7 @@ final class CriteriaEngineTests: XCTestCase {
       pickupDistanceMiles: 15,
       estimatedHourlyRate: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .pickupTooFar) = decision else {
       XCTFail("expected reject(pickupTooFar), got \(decision)")
       return
@@ -150,8 +150,8 @@ final class CriteriaEngineTests: XCTestCase {
   }
 
   func testBlockedRideType_rejects() {
-    FilterConfig.blockedRideTypes = [.uberXL]
-    defer { FilterConfig.blockedRideTypes = [] }
+    FilterConfig.setBlockedRideTypes([.uberXL], service: "uber")
+    defer { FilterConfig.setBlockedRideTypes([], service: "uber") }
     let offer = OfferData(
       price: 20,
       miles: 5,
@@ -168,7 +168,7 @@ final class CriteriaEngineTests: XCTestCase {
       pickupDistanceMiles: nil,
       estimatedHourlyRate: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .blockedRideType) = decision else {
       XCTFail("expected reject(blockedRideType), got \(decision)")
       return
@@ -176,8 +176,8 @@ final class CriteriaEngineTests: XCTestCase {
   }
 
   func testLowPassengerRating_rejects() {
-    FilterConfig.minPassengerRating = 4.5
-    defer { FilterConfig.minPassengerRating = 4.0 }
+    FilterConfig.setMinPassengerRating(4.5, service: "uber")
+    defer { FilterConfig.setMinPassengerRating(4.0, service: "uber") }
     let offer = OfferData(
       price: 15,
       miles: 5,
@@ -194,7 +194,7 @@ final class CriteriaEngineTests: XCTestCase {
       pickupDistanceMiles: nil,
       estimatedHourlyRate: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .lowPassengerRating) = decision else {
       XCTFail("expected reject(lowPassengerRating), got \(decision)")
       return
@@ -202,8 +202,8 @@ final class CriteriaEngineTests: XCTestCase {
   }
 
   func testBelowSurgeThreshold_rejects() {
-    FilterConfig.minSurgeMultiplier = 1.5
-    defer { FilterConfig.minSurgeMultiplier = 1.0 }
+    FilterConfig.setMinSurgeMultiplier(1.5, service: "uber")
+    defer { FilterConfig.setMinSurgeMultiplier(1.0, service: "uber") }
     let offer = OfferData(
       price: 15,
       miles: 5,
@@ -220,7 +220,7 @@ final class CriteriaEngineTests: XCTestCase {
       pickupDistanceMiles: nil,
       estimatedHourlyRate: nil
     )
-    let decision = CriteriaEngine.evaluate(offer)
+    let decision = CriteriaEngine.evaluate(offer, appBundleId: "com.ubercab.driver")
     guard case .reject(reason: .belowSurgeThreshold) = decision else {
       XCTFail("expected reject(belowSurgeThreshold), got \(decision)")
       return
@@ -240,7 +240,7 @@ final class ProdDaemonDecisionTests: XCTestCase {
       acceptPoint: CGPoint(x: 100, y: 200),
       rejectPoint: nil
     )
-    let decision = daemon.decide(offer)
+    let decision = daemon.decide(offer, appBundleId: "com.ubercab.driver")
     guard case .accept(reason: .meetsCriteria) = decision else {
       XCTFail("expected accept, got \(decision)")
       return
@@ -353,17 +353,17 @@ final class AppGroupStoreTests: XCTestCase {
 final class FilterConfigTests: XCTestCase {
 
   func testMinPassengerRatingRoundTrip() {
-    let original = FilterConfig.minPassengerRating
-    FilterConfig.minPassengerRating = 4.7
-    defer { FilterConfig.minPassengerRating = original }
-    XCTAssertEqual(FilterConfig.minPassengerRating, 4.7)
+    let original = FilterConfig.minPassengerRating(service: "uber")
+    FilterConfig.setMinPassengerRating(4.7, service: "uber")
+    defer { FilterConfig.setMinPassengerRating(original, service: "uber") }
+    XCTAssertEqual(FilterConfig.minPassengerRating(service: "uber"), 4.7)
   }
 
   func testMinSurgeMultiplierRoundTrip() {
-    let original = FilterConfig.minSurgeMultiplier
-    FilterConfig.minSurgeMultiplier = 1.25
-    defer { FilterConfig.minSurgeMultiplier = original }
-    XCTAssertEqual(FilterConfig.minSurgeMultiplier, 1.25)
+    let original = FilterConfig.minSurgeMultiplier(service: "uber")
+    FilterConfig.setMinSurgeMultiplier(1.25, service: "uber")
+    defer { FilterConfig.setMinSurgeMultiplier(original, service: "uber") }
+    XCTAssertEqual(FilterConfig.minSurgeMultiplier(service: "uber"), 1.25)
   }
 }
 

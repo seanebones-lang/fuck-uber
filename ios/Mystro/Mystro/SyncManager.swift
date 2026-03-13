@@ -13,29 +13,33 @@ final class SyncManager {
     NotificationCenter.default.addObserver(self, selector: #selector(ubiquitousStoreDidChange), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: store)
   }
 
+  /// Syncs Uber profile and geofence zones to iCloud. Called when user saves filters.
   func syncToCloud() {
-    store.set(FilterConfig.minPrice, forKey: "destro.sync.minPrice")
-    store.set(FilterConfig.minPricePerMile, forKey: "destro.sync.minPricePerMile")
-    store.set(FilterConfig.minHourlyRate, forKey: "destro.sync.minHourlyRate")
-    store.set(FilterConfig.maxPickupDistance, forKey: "destro.sync.maxPickupDistance")
+    let svc = "uber"
+    store.set(FilterConfig.minPrice(service: svc), forKey: "destro.sync.minPrice")
+    store.set(FilterConfig.minPricePerMile(service: svc), forKey: "destro.sync.minPricePerMile")
+    store.set(FilterConfig.minHourlyRate(service: svc), forKey: "destro.sync.minHourlyRate")
+    store.set(FilterConfig.maxPickupDistance(service: svc), forKey: "destro.sync.maxPickupDistance")
     if let data = try? JSONEncoder().encode(FilterConfig.geofenceZones) {
       store.set(data, forKey: "destro.sync.geofenceZones")
     }
     store.synchronize()
   }
 
+  /// Pulls Uber profile and geofence from iCloud. Called on launch.
   func pullFromCloud() {
+    let svc = "uber"
     if store.double(forKey: "destro.sync.minPrice") > 0 {
-      FilterConfig.minPrice = store.double(forKey: "destro.sync.minPrice")
+      FilterConfig.setMinPrice(store.double(forKey: "destro.sync.minPrice"), service: svc)
     }
     if store.double(forKey: "destro.sync.minPricePerMile") > 0 {
-      FilterConfig.minPricePerMile = store.double(forKey: "destro.sync.minPricePerMile")
+      FilterConfig.setMinPricePerMile(store.double(forKey: "destro.sync.minPricePerMile"), service: svc)
     }
     if store.double(forKey: "destro.sync.minHourlyRate") > 0 {
-      FilterConfig.minHourlyRate = store.double(forKey: "destro.sync.minHourlyRate")
+      FilterConfig.setMinHourlyRate(store.double(forKey: "destro.sync.minHourlyRate"), service: svc)
     }
     if store.double(forKey: "destro.sync.maxPickupDistance") > 0 {
-      FilterConfig.maxPickupDistance = store.double(forKey: "destro.sync.maxPickupDistance")
+      FilterConfig.setMaxPickupDistance(store.double(forKey: "destro.sync.maxPickupDistance"), service: svc)
     }
     if let data = store.data(forKey: "destro.sync.geofenceZones") {
       do {
@@ -51,23 +55,25 @@ final class SyncManager {
     DispatchQueue.main.async { SyncManager.shared.pullFromCloud() }
   }
 
-  /// Export settings as JSON dictionary for backup.
+  /// Export settings as JSON dictionary for backup (Uber profile + geofence).
   func exportSettings() -> [String: Any] {
-    [
-      "minPrice": FilterConfig.minPrice,
-      "minPricePerMile": FilterConfig.minPricePerMile,
-      "minHourlyRate": FilterConfig.minHourlyRate,
-      "maxPickupDistance": FilterConfig.maxPickupDistance,
+    let svc = "uber"
+    return [
+      "minPrice": FilterConfig.minPrice(service: svc),
+      "minPricePerMile": FilterConfig.minPricePerMile(service: svc),
+      "minHourlyRate": FilterConfig.minHourlyRate(service: svc),
+      "maxPickupDistance": FilterConfig.maxPickupDistance(service: svc),
       "geofenceZones": (try? JSONEncoder().encode(FilterConfig.geofenceZones)).flatMap { try? JSONSerialization.jsonObject(with: $0) } ?? []
     ]
   }
 
-  /// Import from exported dictionary.
+  /// Import from exported dictionary into Uber profile.
   func importSettings(_ dict: [String: Any]) {
-    if let v = dict["minPrice"] as? Double, v > 0 { FilterConfig.minPrice = v }
-    if let v = dict["minPricePerMile"] as? Double, v > 0 { FilterConfig.minPricePerMile = v }
-    if let v = dict["minHourlyRate"] as? Double, v > 0 { FilterConfig.minHourlyRate = v }
-    if let v = dict["maxPickupDistance"] as? Double, v > 0 { FilterConfig.maxPickupDistance = v }
+    let svc = "uber"
+    if let v = dict["minPrice"] as? Double, v > 0 { FilterConfig.setMinPrice(v, service: svc) }
+    if let v = dict["minPricePerMile"] as? Double, v > 0 { FilterConfig.setMinPricePerMile(v, service: svc) }
+    if let v = dict["minHourlyRate"] as? Double, v > 0 { FilterConfig.setMinHourlyRate(v, service: svc) }
+    if let v = dict["maxPickupDistance"] as? Double, v > 0 { FilterConfig.setMaxPickupDistance(v, service: svc) }
     if let arr = dict["geofenceZones"] as? [[String: Any]],
        let data = try? JSONSerialization.data(withJSONObject: arr),
        let zones = try? JSONDecoder().decode([GeofenceZone].self, from: data) {

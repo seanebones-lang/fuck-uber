@@ -40,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     )
     daemon = d
     GeofenceManager.shared.requestLocationPermission()
+    SyncManager.shared.pullFromCloud()
     registerBackgroundRefreshTask()
     return true
   }

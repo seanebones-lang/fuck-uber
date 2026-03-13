@@ -106,6 +106,7 @@ enum DecisionReason: String, Codable {
   case lowPassengerRating = "low_passenger_rating"
   case belowSurgeThreshold = "below_surge_threshold"
   case blockedRideType = "blocked_ride_type"
+  case belowRideQuality = "below_ride_quality"
 }
 
 enum RideDecision: Equatable {
